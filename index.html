@@ -1079,7 +1079,7 @@
             ar: {
                 platformName: "منصة ذاكر التعليمية",
                 platformSub: "Zakker Educational Platform",
-                firebaseConnected: "Firebase متصل",
+                Connected: "متصل",
                 firebaseLocalReady: "جاهز للعمل",
                 logout: "خروج",
                 welcomeBadge: "التعلم الذكي والمتطور",
@@ -1205,7 +1205,7 @@
             en: {
                 platformName: "Zakker Educational Platform",
                 platformSub: "منصة ذاكر التعليمية",
-                firebaseConnected: "Firebase Connected",
+                firebaseConnected: "Connected",
                 firebaseLocalReady: "System Ready",
                 logout: "Logout",
                 welcomeBadge: "Smart & Advanced Learning",
@@ -1367,41 +1367,76 @@
         let activeAudioCardIndex = null;
 
         const DEFAULT_ADMIN = { username: "admin", password: "123" };
-        let adminCredentials = JSON.parse(localStorage.getItem('zakker_admin')) || { ...DEFAULT_ADMIN };
-        if (!localStorage.getItem('zakker_admin')) {
-            localStorage.setItem('zakker_admin', JSON.stringify(adminCredentials));
+        const FIREBASE_TIMEOUT_MS = 5000;
+
+        /* ---- safe helpers (never throw) ---- */
+        function lsGet(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw === null ? fallback : JSON.parse(raw);
+            } catch (e) { return fallback; }
         }
+        function lsSet(key, value) {
+            try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch (e) { return false; }
+        }
+        // Trim + convert Arabic-Indic digits (١٢٣ / ۱۲۳) to Latin so Arabic keyboards work.
+        function normalizeCredential(v) {
+            return String(v === null || v === undefined ? '' : v)
+                .trim()
+                .replace(/[\u0660-\u0669]/g, d => d.charCodeAt(0) - 0x0660)
+                .replace(/[\u06F0-\u06F9]/g, d => d.charCodeAt(0) - 0x06F0);
+        }
+        // Returns { username, password } (strings) or null if the value is unusable.
+        function sanitizeAdmin(c) {
+            if (!c || typeof c !== 'object') return null;
+            const username = normalizeCredential(c.username);
+            const password = normalizeCredential(c.password);
+            return username && password ? { username, password } : null;
+        }
+        // Firebase never rejects while offline; it just waits. This guarantees a result.
+        function withTimeout(promise, ms) {
+            return Promise.race([
+                Promise.resolve(promise),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms || FIREBASE_TIMEOUT_MS))
+            ]);
+        }
+
+        let adminCredentials = sanitizeAdmin(lsGet('zakker_admin', null)) || { ...DEFAULT_ADMIN };
+        lsSet('zakker_admin', adminCredentials);
 
         if (isFirebaseActive && db) {
-            db.ref('admin').once('value', snap => {
+            withTimeout(db.ref('admin').once('value')).then(snap => {
                 if (!snap.exists()) {
-                    db.ref('admin').set(DEFAULT_ADMIN);
-                } else {
-                    adminCredentials = snap.val();
-                    localStorage.setItem('zakker_admin', JSON.stringify(adminCredentials));
+                    return db.ref('admin').set(DEFAULT_ADMIN);
                 }
-            });
+                const remote = sanitizeAdmin(snap.val());
+                if (remote) {
+                    adminCredentials = remote;
+                    lsSet('zakker_admin', remote);
+                }
+            }).catch(err => console.warn('Admin sync skipped:', err && err.message));
         }
 
-        let localStudentsDb = JSON.parse(localStorage.getItem('zakker_students')) || {
-            "student123": {
-                password: "123",
-                regDate: "2026-11-17 10:00",
-                notes: "طالب تجريبي افتراضي",
-                banned: false,
-                results: [
-                    {
-                        lessonTitle: "مقدمة في الذكاء الاصطناعي والتعلم الآلي",
-                        dateTime: "2026-11-17 12:30",
-                        score: 9,
-                        total: 10,
-                        percentage: 90
-                    }
-                ]
-            }
-        };
-        if (!localStorage.getItem('zakker_students')) {
-            localStorage.setItem('zakker_students', JSON.stringify(localStudentsDb));
+        let localStudentsDb = lsGet('zakker_students', null);
+        if (!localStudentsDb || typeof localStudentsDb !== 'object' || Array.isArray(localStudentsDb)) {
+            localStudentsDb = {
+                "student123": {
+                    password: "123",
+                    regDate: "2026-11-17 10:00",
+                    notes: "طالب تجريبي افتراضي",
+                    banned: false,
+                    results: [
+                        {
+                            lessonTitle: "مقدمة في الذكاء الاصطناعي والتعلم الآلي",
+                            dateTime: "2026-11-17 12:30",
+                            score: 9,
+                            total: 10,
+                            percentage: 90
+                        }
+                    ]
+                }
+            };
+            lsSet('zakker_students', localStudentsDb);
         }
 
         /* ==========================================================
@@ -1464,7 +1499,7 @@
 
             const completeLogin = (studentData) => {
                 btn.innerHTML = origHTML;
-                if (studentData && studentData.password === pass) {
+                if (studentData && String(studentData.password) === normalizeCredential(pass)) {
                     if (studentData.banned) {
                         showToast(currentLang === 'ar' ? 'عذراً، هذا الحساب محظور من قبل الإدارة.' : 'Sorry, this account has been banned.', 'error');
                         return;
@@ -1479,7 +1514,7 @@
             };
 
             if (isFirebaseActive && db) {
-                db.ref('students/' + user).once('value').then(snapshot => {
+                withTimeout(db.ref('students/' + user).once('value')).then(snapshot => {
                     completeLogin(snapshot.val());
                 }).catch(() => {
                     completeLogin(localStudentsDb[user]);
@@ -1491,15 +1526,19 @@
 
         function handleAdminLogin(event) {
             event.preventDefault();
-            const user = document.getElementById('adminUser').value.trim();
-            const pass = document.getElementById('adminPass').value.trim();
+            const user = normalizeCredential(document.getElementById('adminUser').value);
+            const pass = normalizeCredential(document.getElementById('adminPass').value);
             const btn = document.getElementById('adminLoginBtn');
             const origHTML = btn.innerHTML;
+            btn.disabled = true;
             btn.innerHTML = '<div class="spinner"></div>';
 
-            const verifyAdmin = (creds) => {
+            const finish = () => {
+                btn.disabled = false;
                 btn.innerHTML = origHTML;
-                if (user === creds.username && pass === creds.password) {
+                const creds = adminCredentials;
+                // username is case-insensitive (mobile keyboards capitalize the first letter)
+                if (user.toLowerCase() === creds.username.toLowerCase() && pass === creds.password) {
                     showToast(currentLang === 'ar' ? 'مرحباً بك في لوحة تحكم المدير!' : 'Welcome to Admin Dashboard!');
                     initAdminDashboard();
                     navigateTo('admin-dashboard');
@@ -1509,12 +1548,20 @@
             };
 
             if (isFirebaseActive && db) {
-                db.ref('admin').once('value').then(snap => {
-                    const creds = snap.val() || adminCredentials;
-                    verifyAdmin(creds);
-                }).catch(() => verifyAdmin(adminCredentials));
+                withTimeout(db.ref('admin').once('value'))
+                    .then(snap => sanitizeAdmin(snap.val()), err => {
+                        console.warn('Admin read failed, using cached credentials:', err && err.message);
+                        return null;
+                    })
+                    .then(remote => {
+                        if (remote) {
+                            adminCredentials = remote;
+                            lsSet('zakker_admin', remote);
+                        }
+                        finish();
+                    });
             } else {
-                setTimeout(() => verifyAdmin(adminCredentials), 300);
+                setTimeout(finish, 200);
             }
         }
 
@@ -2424,7 +2471,7 @@
 
             if (localStudentsDb[currentUser.username]) {
                 localStudentsDb[currentUser.username].results = currentUser.results;
-                localStorage.setItem('zakker_students', JSON.stringify(localStudentsDb));
+                lsSet('zakker_students', localStudentsDb);
             }
 
             const newIndex = currentUser.results.length - 1;
@@ -2526,9 +2573,14 @@
 
         function loadAdminStudentsTable() {
             if (isFirebaseActive && db) {
-                db.ref('students').once('value').then(snapshot => {
-                    const data = snapshot.val() || localStudentsDb;
-                    renderStudentsTableData(data);
+                withTimeout(db.ref('students').once('value')).then(snapshot => {
+                    const remote = snapshot.val();
+                    if (remote && typeof remote === 'object') {
+                        // keep local mirror in sync so edit / note actions work for every student
+                        localStudentsDb = remote;
+                        lsSet('zakker_students', localStudentsDb);
+                    }
+                    renderStudentsTableData(localStudentsDb);
                 }).catch(() => renderStudentsTableData(localStudentsDb));
             } else {
                 renderStudentsTableData(localStudentsDb);
@@ -2551,36 +2603,39 @@
 
             keys.forEach(username => {
                 const student = studentsObj[username];
-                const results = student.results || [];
+                if (!student || typeof student !== 'object') return;
+                const results = Array.isArray(student.results) ? student.results : Object.values(student.results || {});
+                const uJs = escapeHtml(JSON.stringify(username));
+                const uHtml = escapeHtml(username);
                 const isBanned = Boolean(student.banned);
 
                 const resultsSummaryText = results.length > 0
-                    ? results.map(r => `${r.lessonTitle} (${r.score}/${r.total} - ${r.dateTime})`).join(' | ')
+                    ? results.map(r => `${escapeHtml(r.lessonTitle)} (${escapeHtml(r.score)}/${escapeHtml(r.total)} - ${escapeHtml(r.dateTime)})`).join(' | ')
                     : (currentLang === 'ar' ? 'لا توجد نتائج' : 'No results');
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-white/5 transition ${isBanned ? 'opacity-60 bg-rose-950/20' : ''}">
                         <td class="px-4 py-4 font-bold text-white">
                             <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                                <span class="w-8 h-8 rounded-lg bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 text-xs flex-shrink-0">${username.charAt(0).toUpperCase()}</span>
-                                <span>${username} ${isBanned ? '<span class="text-rose-400 text-xs">(محظور)</span>' : ''}</span>
+                                <span class="w-8 h-8 rounded-lg bg-violet-600/20 border border-violet-500/30 flex items-center justify-center text-violet-400 text-xs flex-shrink-0">${uHtml.charAt(0).toUpperCase()}</span>
+                                <span>${uHtml} ${isBanned ? '<span class="text-rose-400 text-xs">(محظور)</span>' : ''}</span>
                             </div>
                         </td>
-                        <td class="px-4 py-4 font-mono text-xs text-slate-300">${student.password}</td>
-                        <td class="px-4 py-4 text-slate-300 font-mono text-xs">${student.regDate || '2026-11-17'}</td>
+                        <td class="px-4 py-4 font-mono text-xs text-slate-300">${escapeHtml(student.password)}</td>
+                        <td class="px-4 py-4 text-slate-300 font-mono text-xs">${escapeHtml(student.regDate || '2026-11-17')}</td>
                         <td class="px-4 py-4 text-indigo-300 text-xs max-w-xs truncate" title="${resultsSummaryText}">${results.length} (${resultsSummaryText})</td>
                         <td class="px-4 py-4">
-                            <input type="text" value="${student.notes || ''}" onchange="updateStudentNote('${username}', this.value)" class="px-3 py-1.5 rounded-lg glass-input text-xs w-36" placeholder="ملاحظة...">
+                            <input type="text" value="${escapeHtml(student.notes || '')}" onchange="updateStudentNote(${uJs}, this.value)" class="px-3 py-1.5 rounded-lg glass-input text-xs w-36" placeholder="ملاحظة...">
                         </td>
                         <td class="px-4 py-4">
                             <div class="flex items-center space-x-1.5 rtl:space-x-reverse">
-                                <button type="button" onclick="openEditStudentModal('${username}')" class="px-2.5 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 transition text-xs" title="${currentLang === 'ar' ? 'تعديل' : 'Edit'}">
+                                <button type="button" onclick="openEditStudentModal(${uJs})" class="px-2.5 py-1.5 rounded-lg bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 transition text-xs" title="${currentLang === 'ar' ? 'تعديل' : 'Edit'}">
                                     <i class="fa-solid fa-pen"></i>
                                 </button>
-                                <button type="button" onclick="toggleBanStudent('${username}', ${isBanned})" class="px-2.5 py-1.5 rounded-lg ${isBanned ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-600/20 text-amber-300 border border-amber-500/30'} hover:opacity-80 transition text-xs" title="${isBanned ? (currentLang === 'ar' ? 'رفع الحظر' : 'Unban') : (currentLang === 'ar' ? 'حظر' : 'Ban')}">
+                                <button type="button" onclick="toggleBanStudent(${uJs}, ${isBanned})" class="px-2.5 py-1.5 rounded-lg ${isBanned ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-600/20 text-amber-300 border border-amber-500/30'} hover:opacity-80 transition text-xs" title="${isBanned ? (currentLang === 'ar' ? 'رفع الحظر' : 'Unban') : (currentLang === 'ar' ? 'حظر' : 'Ban')}">
                                     <i class="fa-solid ${isBanned ? 'fa-user-check' : 'fa-ban'}"></i>
                                 </button>
-                                <button type="button" onclick="openConfirmDeleteModal('${username}')" class="px-2.5 py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 transition text-xs" title="${currentLang === 'ar' ? 'حذف' : 'Delete'}">
+                                <button type="button" onclick="openConfirmDeleteModal(${uJs})" class="px-2.5 py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 transition text-xs" title="${currentLang === 'ar' ? 'حذف' : 'Delete'}">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
@@ -2610,7 +2665,7 @@
             };
 
             localStudentsDb[user] = newStudentData;
-            localStorage.setItem('zakker_students', JSON.stringify(localStudentsDb));
+            lsSet('zakker_students', localStudentsDb);
 
             if (isFirebaseActive && db) {
                 db.ref('students/' + user).set(newStudentData);
@@ -2644,7 +2699,7 @@
             if (localStudentsDb[username]) {
                 localStudentsDb[username].password = newPass;
                 localStudentsDb[username].notes = newNotes;
-                localStorage.setItem('zakker_students', JSON.stringify(localStudentsDb));
+                lsSet('zakker_students', localStudentsDb);
 
                 if (isFirebaseActive && db) {
                     db.ref('students/' + username).update({ password: newPass, notes: newNotes });
@@ -2678,7 +2733,7 @@
         function deleteStudentConfirmed(username) {
             if (!username) return;
             delete localStudentsDb[username];
-            localStorage.setItem('zakker_students', JSON.stringify(localStudentsDb));
+            lsSet('zakker_students', localStudentsDb);
 
             if (isFirebaseActive && db) {
                 db.ref('students/' + username).remove();
@@ -2692,7 +2747,7 @@
             const newState = !currentBannedState;
             if (localStudentsDb[username]) {
                 localStudentsDb[username].banned = newState;
-                localStorage.setItem('zakker_students', JSON.stringify(localStudentsDb));
+                lsSet('zakker_students', localStudentsDb);
             }
             if (isFirebaseActive && db) {
                 db.ref('students/' + username + '/banned').set(newState);
@@ -2704,7 +2759,7 @@
         function updateStudentNote(username, noteText) {
             if (localStudentsDb[username]) {
                 localStudentsDb[username].notes = noteText;
-                localStorage.setItem('zakker_students', JSON.stringify(localStudentsDb));
+                lsSet('zakker_students', localStudentsDb);
             }
             if (isFirebaseActive && db) {
                 db.ref('students/' + username + '/notes').set(noteText);
@@ -2714,15 +2769,20 @@
 
         function handleUpdateAdminProfile(event) {
             event.preventDefault();
-            const u = document.getElementById('adminNewUsernameInput').value.trim();
-            const p = document.getElementById('adminNewPasswordInput').value.trim();
-            if (!u || !p) return;
+            const creds = sanitizeAdmin({
+                username: document.getElementById('adminNewUsernameInput').value,
+                password: document.getElementById('adminNewPasswordInput').value
+            });
+            if (!creds) {
+                showToast(currentLang === 'ar' ? 'أدخل اسم مستخدم وكلمة مرور صالحين.' : 'Enter a valid username and password.', 'error');
+                return;
+            }
 
-            adminCredentials = { username: u, password: p };
-            localStorage.setItem('zakker_admin', JSON.stringify(adminCredentials));
+            adminCredentials = creds;
+            lsSet('zakker_admin', adminCredentials);
 
             if (isFirebaseActive && db) {
-                db.ref('admin').set(adminCredentials);
+                db.ref('admin').set(adminCredentials).catch(err => console.warn('Admin save to cloud failed:', err && err.message));
             }
             showToast(currentLang === 'ar' ? 'تم تحديث بيانات حساب المدير بنجاح!' : 'Admin credentials updated successfully!');
         }
@@ -2730,55 +2790,6 @@
         /* ==========================================================
            13. AI PROMPT GENERATOR & LESSON JSON EXPORTER (WITH GAMES)
            ========================================================== */
-        function generateAIPromptLegacy() {
-            const title = document.getElementById('aiLessonTitleInput').value.trim();
-            if (!title) {
-                showToast(currentLang === 'ar' ? 'الرجاء إدخال عنوان الدرس أولاً.' : 'Please enter lesson title first.', 'error');
-                return;
-            }
-
-            const promptText = `Act as an elite educational curriculum designer. Generate a complete JSON lesson schema for the lesson titled: "${title}".
-Return ONLY valid JSON strictly matching this structure:
-{
-  "title": "${title}",
-  "description": "Comprehensive lesson summary...",
-  "images": [
-    {"title": "Image 1 Title", "explanation": "Detailed educational explanation...", "url": "https://placehold.co/1200x800/4f46e5/ffffff?text=1"}
-  ],
-  "audios": [
-    {"title": "Audio Explanation 1 Title", "explanation": "Detailed written explanation text for clip 1 that will be displayed on the card and read aloud automatically..."}
-  ],
-  "interactiveCards": [
-    {"title": "Card 1", "desc": "Card 1 explanation...", "image": "https://placehold.co/400x200/4f46e5/ffffff?text=Card+1", "audioText": "Text to be read aloud"}
-  ],
-  "games": {
-    "wheel": [
-      {"label": "Topic 1", "question": "Wheel question 1?", "options": ["Option A", "Option B", "Option C"], "answer": 0}
-    ],
-    "arcade": {
-      "targetPrompt": "Catch the correct concepts related to ${title}!",
-      "correctItems": ["Correct Concept 1", "Correct Concept 2", "Correct Concept 3", "Correct Concept 4", "Correct Concept 5"],
-      "wrongItems": ["Distractor 1", "Distractor 2", "Distractor 3", "Distractor 4"]
-    },
-    "matching": [
-      {"term": "Term 1", "definition": "Definition 1"},
-      {"term": "Term 2", "definition": "Definition 2"},
-      {"term": "Term 3", "definition": "Definition 3"},
-      {"term": "Term 4", "definition": "Definition 4"},
-      {"term": "Term 5", "definition": "Definition 5"}
-    ]
-  },
-  "questions": [
-    {"q": "Question 1?", "options": ["Option A", "Option B", "Option C", "Option D"], "answer": 0}
-  ]
-}
-Ensure 5 images, 5 audio cards, 5 interactive cards, 6 wheel items, 5 matching pairs, and exactly 10 multiple-choice questions.`;
-
-            document.getElementById('aiGeneratedPromptOutput').value = promptText;
-            document.getElementById('aiPromptResultContainer').classList.remove('hidden');
-            showToast(currentLang === 'ar' ? 'تم توليد البرومبت الشامل للألعاب والدرس بنجاح!' : 'AI prompt with games generated successfully!');
-        }
-
         function copyAIPrompt() {
             const textarea = document.getElementById('aiGeneratedPromptOutput');
             textarea.select();
