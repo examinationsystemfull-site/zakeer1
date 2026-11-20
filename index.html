@@ -73,10 +73,18 @@
         }
         /* ---- Voice recorder: live transcript + match ring ---- */
         .match-ring-progress {
-            transition: stroke-dashoffset 0.6s ease, stroke 0.3s ease;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
         }
+        .wd { padding: 0.1rem 0.55rem; border-radius: 0.6rem; border: 1px solid transparent; transition: background .2s, border-color .2s; }
+        .wd-ok { background: rgba(16,185,129,.18); border-color: rgba(16,185,129,.55); color: #a7f3d0; }
+        .wd-miss { background: rgba(244,63,94,.18); border-color: rgba(244,63,94,.55); color: #fecdd3; }
+        .wd-part { background: rgba(245,158,11,.18); border-color: rgba(245,158,11,.55); color: #fde68a; }
+        .wd-pending { background: rgba(148,163,184,.10); border-color: rgba(148,163,184,.25); color: #94a3b8; }
+        .wd-neutral { color: #94a3b8; padding: 0.1rem 0.2rem; }
+        html[data-theme="frost"] .wd-ok { color: #065f46; }
+        html[data-theme="frost"] .wd-miss { color: #9f1239; }
+        html[data-theme="frost"] .wd-part { color: #92400e; }
+        html[data-theme="frost"] .wd-pending, html[data-theme="frost"] .wd-neutral { color: #475569; }
         .match-ring-wrap {
             transition: filter 0.3s ease;
         }
@@ -583,7 +591,7 @@
                                 <div id="matchRingWrap" class="match-ring-wrap relative w-32 h-32 sm:w-36 sm:h-36 shrink-0" role="img" aria-live="polite">
                                     <svg viewBox="0 0 120 120" class="w-full h-full">
                                         <circle cx="60" cy="60" r="52" fill="rgba(15,23,42,0.55)" stroke="rgba(255,255,255,0.12)" stroke-width="8"></circle>
-                                        <circle id="matchRingProgress" class="match-ring-progress" cx="60" cy="60" r="52" fill="none" stroke="#64748b" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
+                                        <circle id="matchRingProgress" class="match-ring-progress" transform="rotate(-90 60 60)" cx="60" cy="60" r="52" fill="none" stroke="#64748b" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
                                     </svg>
                                     <div class="absolute inset-0 flex items-center justify-center">
                                         <span id="matchPercentText" class="text-2xl sm:text-3xl font-extrabold text-white" dir="ltr">--</span>
@@ -611,8 +619,18 @@
                                         <button type="button" id="stopRecordBtn" onclick="stopVoiceRecording()" disabled class="w-10 h-10 rounded-xl bg-slate-600/50 text-slate-400 flex items-center justify-center transition cursor-not-allowed" title="إيقاف التسجيل">
                                             <i class="fa-solid fa-square"></i>
                                         </button>
+                                        <button type="button" onclick="resetRecorderUI()" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 flex items-center justify-center transition" title="مسح / Clear">
+                                            <i class="fa-solid fa-eraser"></i>
+                                        </button>
                                     </div>
                                 </div>
+                                <label class="flex items-start gap-2 text-xs text-slate-300 cursor-pointer select-none">
+                                    <input type="checkbox" id="saveAudioToggle" class="mt-0.5 accent-indigo-600" checked>
+                                    <span>
+                                        <span data-i18n="saveAudioLabel">حفظ نسخة صوتية من التسجيل</span>
+                                        <span class="block text-[11px] text-slate-400" data-i18n="saveAudioHint">على بعض الهواتف يمنع الحفظ الصوتي ظهور النص مباشرة؛ أوقفه إن لم يظهر النص.</span>
+                                    </span>
+                                </label>
                                 <label for="recognizedTextBox" class="text-xs font-semibold text-slate-300 flex items-center space-x-2 rtl:space-x-reverse">
                                     <i class="fa-solid fa-closed-captioning text-indigo-400"></i>
                                     <span data-i18n="recognizedTextLabel">النص المسجل (للعرض فقط)</span>
@@ -625,6 +643,23 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Word-by-word comparison -->
+                        <div id="matchWordsPanel" class="hidden space-y-3 p-4 rounded-2xl bg-white/5 border border-white/10">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <h4 class="text-sm font-bold text-white flex items-center space-x-2 rtl:space-x-reverse">
+                                    <i class="fa-solid fa-spell-check text-indigo-400"></i>
+                                    <span data-i18n="matchWordsTitle">مقارنة الكلمات</span>
+                                </h4>
+                                <div class="flex flex-wrap items-center gap-3 text-[11px] text-slate-300">
+                                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span><span data-i18n="legendOk">صحيحة</span></span>
+                                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span><span data-i18n="legendPart">قريبة</span></span>
+                                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-400"></span><span data-i18n="legendMiss">ناقصة / خاطئة</span></span>
+                                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span><span data-i18n="legendPending">لم تُقرأ بعد</span></span>
+                                </div>
+                            </div>
+                            <div id="matchWordsView" dir="auto" class="flex flex-wrap gap-1.5 text-sm leading-loose"></div>
+                        </div>
+
                     </section>
 
                     <!-- 6. Interactive 10-Question MCQ Quiz Section -->
@@ -1268,6 +1303,14 @@
                 matchHintExcellent: "ممتاز! نطقك مطابق تقريباً للنص.",
                 matchHintGood: "جيد، يمكنك تحسين بعض الكلمات.",
                 matchHintLow: "حاول مرة أخرى وانطق النص ببطء ووضوح.",
+                saveAudioLabel: "حفظ نسخة صوتية من التسجيل",
+                saveAudioHint: "على بعض الهواتف يمنع الحفظ الصوتي ظهور النص مباشرة؛ أوقفه إن لم يظهر النص.",
+                matchWordsTitle: "مقارنة الكلمات",
+                legendOk: "صحيحة",
+                legendPart: "قريبة",
+                legendMiss: "ناقصة / خاطئة",
+                legendPending: "لم تُقرأ بعد",
+                recognizedTextPlaceholderManual: "متصفحك لا يدعم التفريغ التلقائي: اكتب ما قلته أو استخدم الإملاء الصوتي في لوحة المفاتيح.",
                 speechRecognitionUnsupported: "متصفحك لا يدعم التعرف على الصوت. استخدم Chrome أو Edge لعرض النص.",
                 quizBadge: "اختبار تقييمي معتمد + شهادة إتمام",
                 quizMainTitle: "اختبار MCQ تفاعلي (10 أسئلة)",
@@ -1423,6 +1466,14 @@
                 matchHintExcellent: "Excellent! Your speech nearly matches the text.",
                 matchHintGood: "Good, a few words could be improved.",
                 matchHintLow: "Try again and speak slowly and clearly.",
+                saveAudioLabel: "Save an audio copy of the recording",
+                saveAudioHint: "On some phones saving audio blocks live transcription; turn it off if no text appears.",
+                matchWordsTitle: "Word comparison",
+                legendOk: "Correct",
+                legendPart: "Close",
+                legendMiss: "Missed / wrong",
+                legendPending: "Not read yet",
+                recognizedTextPlaceholderManual: "Your browser has no automatic transcription: type what you said or use your keyboard's voice dictation.",
                 speechRecognitionUnsupported: "Your browser does not support speech recognition. Use Chrome or Edge to see the transcript.",
                 quizBadge: "Certified Assessment Quiz + Certificate",
                 quizMainTitle: "Interactive MCQ Quiz (10 Questions)",
@@ -2602,12 +2653,19 @@
             stopAllAudioExplanationCards();
         }
 
-        /* ---------- Voice recorder: audio capture + live speech-to-text + match ratio ---------- */
+        /* ---------- Voice workspace: recording + live speech-to-text + match ratio ---------- */
         const SpeechRecognitionCtor = window.SpeechRecognition || window.webkitSpeechRecognition || null;
         const MATCH_RING_CIRCUMFERENCE = 2 * Math.PI * 52;
         const MATCH_WORD_SIMILARITY_MIN = 0.7;      // a spoken word counts as a match above this similarity
-        const MATCH_CHAR_SCORE_MAX_LENGTH = 3000;   // skip the character-level pass for very long texts
+        const MATCH_CHAR_SCORE_MAX_LENGTH = 1500;   // skip the character-level pass for very long texts
         const RECOGNITION_RESTART_DELAY_MS = 250;
+        const IS_MOBILE_DEVICE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+        let recordingSession = 0;                   // invalidates late callbacks of a previous recording
+        let lastWordViewHtml = '';
+
+        function voiceEsc(v) {
+            return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
 
         function setRecorderButtons(recording) {
             const startBtn = document.getElementById('startRecordBtn');
@@ -2623,7 +2681,8 @@
             stopBtn.classList.toggle('text-white', recording);
             stopBtn.classList.toggle('hover:bg-indigo-500', recording);
             document.getElementById('recognitionLangSelect').disabled = recording;
-            // Visual cue on the transcript box while listening.
+            const saveToggle = document.getElementById('saveAudioToggle');
+            if (saveToggle) saveToggle.disabled = recording;
             const box = document.getElementById('recognizedTextBox');
             if (box) box.style.borderColor = recording ? '#fb7185' : '';
             const dot = document.getElementById('recLiveDot');
@@ -2656,7 +2715,8 @@
         function normalizeForMatch(text) {
             return String(text || '')
                 .toLowerCase()
-                .replace(/[\u064B-\u065F\u0670\u0640]/g, '')   // tashkeel + tatweel
+                .replace(/[\u064B-\u065F\u0670\u0640\u200B-\u200F\u202A-\u202E]/g, '')   // tashkeel, tatweel, invisible marks
+                .replace(/['\u2019\u02BC`]/g, '')                                         // apostrophes: don't -> dont
                 .replace(/[أإآٱ]/g, 'ا')
                 .replace(/ى/g, 'ي')
                 .replace(/ة/g, 'ه')
@@ -2694,6 +2754,21 @@
             return normalized ? normalized.split(' ') : [];
         }
 
+        // Splits the reference into the words shown to the student (display) and the normalized
+        // words used for scoring (words), with owner[] mapping every scored word to its display word.
+        function tokenizeReference(text) {
+            const display = [];
+            const words = [];
+            const owner = [];
+            String(text || '').split(/\s+/).filter(Boolean).forEach(raw => {
+                const index = display.length;
+                display.push(raw);
+                const normalized = normalizeForMatch(raw);
+                if (normalized) normalized.split(' ').forEach(word => { words.push(word); owner.push(index); });
+            });
+            return { display, words, owner };
+        }
+
         // Weighted LCS: table[i][j] = best credit aligning the first i spoken words with the first j reference words.
         function buildAlignmentTable(refWords, spokenWords) {
             const n = spokenWords.length;
@@ -2709,14 +2784,36 @@
             return table;
         }
 
-        // Returns 0-100, or null when either text is empty.
+        // Walks the table backwards to find which reference words were actually spoken.
+        function backtrackMatches(refWords, spokenWords, table, refCount) {
+            const matched = new Array(refWords.length).fill(false);
+            let i = spokenWords.length;
+            let j = refCount;
+            while (i > 0 && j > 0) {
+                const a = spokenWords[i - 1];
+                const b = refWords[j - 1];
+                const similarity = a === b ? 1 : similarityRatio(a, b);
+                const credit = similarity >= MATCH_WORD_SIMILARITY_MIN ? similarity : 0;
+                if (credit > 0 && Math.abs(table[i][j] - (table[i - 1][j - 1] + credit)) < 1e-9) {
+                    matched[j - 1] = true; i--; j--;
+                } else if (Math.abs(table[i][j] - table[i - 1][j]) < 1e-9) {
+                    i--;
+                } else {
+                    j--;
+                }
+            }
+            return matched;
+        }
+
+        // Returns { percent, ref, matched, refCount } or null when either text is empty.
         // live = true  -> while the student is still speaking, compare against the part of the reference reached so far.
         // live = false -> compare against the whole reference text.
-        function calculateMatchPercent(referenceText, spokenText, live) {
-            const refWords = tokenizeForMatch(referenceText);
+        function analyzeMatch(referenceText, spokenText, live) {
+            const ref = tokenizeReference(referenceText);
             const spokenWords = tokenizeForMatch(spokenText);
-            if (!refWords.length || !spokenWords.length) return null;
+            if (!ref.words.length || !spokenWords.length) return null;
 
+            const refWords = ref.words;
             const table = buildAlignmentTable(refWords, spokenWords);
             const n = spokenWords.length;
             let refCount = refWords.length;
@@ -2739,7 +2836,19 @@
                 const charScore = similarityRatio(Array.from(refChars), Array.from(spokenChars));
                 finalScore = Math.max(wordScore, 0.5 * wordScore + 0.5 * charScore);
             }
-            return Math.round(Math.max(0, Math.min(1, finalScore)) * 100);
+
+            return {
+                percent: Math.round(Math.max(0, Math.min(1, finalScore)) * 100),
+                ref,
+                matched: backtrackMatches(refWords, spokenWords, table, refCount),
+                refCount
+            };
+        }
+
+        // Returns 0-100, or null when either text is empty.
+        function calculateMatchPercent(referenceText, spokenText, live) {
+            const analysis = analyzeMatch(referenceText, spokenText, live);
+            return analysis ? analysis.percent : null;
         }
 
         function matchColor(percent) {
@@ -2756,31 +2865,80 @@
             if (!ring || !wrap || !label) return;
             const color = matchColor(percent);
             const value = percent === null ? 0 : Math.max(0, Math.min(100, percent));
-            ring.style.strokeDasharray = MATCH_RING_CIRCUMFERENCE;
-            ring.style.strokeDashoffset = MATCH_RING_CIRCUMFERENCE * (1 - value / 100);
+            ring.style.strokeDasharray = String(MATCH_RING_CIRCUMFERENCE);
+            ring.style.strokeDashoffset = String(MATCH_RING_CIRCUMFERENCE * (1 - value / 100));
             ring.style.stroke = color;
             wrap.style.filter = percent === null ? 'none' : `drop-shadow(0 0 10px ${color}) drop-shadow(0 0 22px ${color}66)`;
             label.textContent = percent === null ? '--' : `${percent}%`;
             wrap.setAttribute('aria-label', percent === null ? '' : `${percent}%`);
         }
 
+        // Colors every reference word: green = spoken, red = missed, amber = partly, gray = not reached yet.
+        function renderWordView(analysis) {
+            const panel = document.getElementById('matchWordsPanel');
+            const view = document.getElementById('matchWordsView');
+            if (!panel || !view) return;
+            if (!analysis) {
+                panel.classList.add('hidden');
+                view.innerHTML = '';
+                lastWordViewHtml = '';
+                return;
+            }
+            const { ref, matched, refCount } = analysis;
+            const stats = ref.display.map(() => ({ total: 0, ok: 0, pending: 0 }));
+            ref.owner.forEach((displayIndex, wordIndex) => {
+                const s = stats[displayIndex];
+                s.total++;
+                if (wordIndex >= refCount) s.pending++;
+                else if (matched[wordIndex]) s.ok++;
+            });
+            const html = ref.display.map((raw, i) => {
+                const s = stats[i];
+                const considered = s.total - s.pending;
+                let cls = 'wd-neutral';
+                if (s.total) {
+                    if (considered === 0) cls = 'wd-pending';
+                    else if (s.ok === considered) cls = 'wd-ok';
+                    else if (s.ok === 0) cls = 'wd-miss';
+                    else cls = 'wd-part';
+                }
+                return `<span class="wd ${cls}">${voiceEsc(raw)}</span>`;
+            }).join('');
+            if (html !== lastWordViewHtml) {
+                view.innerHTML = html;
+                lastWordViewHtml = html;
+            }
+            panel.classList.remove('hidden');
+        }
+
+        // Browsers without speech recognition (e.g. Safari / Firefox): let the student type or dictate the text instead.
+        function applyTranscriptBoxMode() {
+            if (SpeechRecognitionCtor) return;
+            const box = document.getElementById('recognizedTextBox');
+            if (!box) return;
+            box.readOnly = false;
+            box.classList.remove('cursor-default');
+            box.setAttribute('placeholder', translations[currentLang].recognizedTextPlaceholderManual);
+        }
+
         function refreshMatchUI() {
             renderVoiceAlert();
+            applyTranscriptBoxMode();
             const hint = document.getElementById('matchHint');
             if (!hint) return;
             const reference = document.getElementById('ttsTextInput').value.trim();
             const spoken = `${finalTranscript} ${interimTranscript}`.trim();
-            const percent = calculateMatchPercent(reference, spoken, isRecordingVoice);
+            const analysis = analyzeMatch(reference, spoken, isRecordingVoice);
+            const percent = analysis ? analysis.percent : null;
             lastMatchPercent = percent;
             renderMatchRing(percent);
+            renderWordView(analysis);
 
             const t = translations[currentLang];
             if (percent !== null) {
                 hint.textContent = percent >= 80 ? t.matchHintExcellent : percent >= 50 ? t.matchHintGood : t.matchHintLow;
-            } else if (!reference && !spoken) {
-                hint.textContent = t.matchHintIdle;
             } else if (!reference) {
-                hint.textContent = t.matchHintNoReference;
+                hint.textContent = (spoken || isRecordingVoice) ? t.matchHintNoReference : t.matchHintIdle;
             } else if (isRecordingVoice) {
                 hint.textContent = t.matchHintListening;
             } else {
@@ -2788,7 +2946,7 @@
             }
         }
 
-        // Streams the transcript into the read-only box and refreshes the glowing ring.
+        // Streams the transcript into the box and refreshes the glowing ring automatically.
         function updateRecognizedTextBox() {
             const box = document.getElementById('recognizedTextBox');
             if (box) {
@@ -2813,10 +2971,10 @@
             return out.join(' ');
         }
 
-        function scheduleRecognitionRestart(recognizer) {
+        function scheduleRecognitionRestart(recognizer, session) {
             clearTimeout(recognitionRestartTimer);
             recognitionRestartTimer = setTimeout(() => {
-                if (!isRecordingVoice || speechRecognizer !== recognizer) return;
+                if (session !== recordingSession || !isRecordingVoice || speechRecognizer !== recognizer) return;
                 try {
                     recognizer.start();
                 } catch (err) {
@@ -2834,6 +2992,7 @@
             audioCaptureFallbackUsed = true;
             mediaRecorder.onstop = null;
             try { mediaRecorder.stop(); } catch (err) { /* already stopped */ }
+            mediaRecorder = null;
             releaseMicrophone();
             showVoiceAlert('voiceAlertAudioConflict');
             return true;
@@ -2843,33 +3002,37 @@
             const code = event && event.error;
             if (code === 'no-speech' || code === 'aborted') return;
             const isArabicUI = currentLang === 'ar';
+            let fatal = false;
             if (code === 'not-allowed' || code === 'service-not-allowed') {
-                recognizer.zkFatal = true;
+                fatal = true;
                 showVoiceAlert('voiceAlertMicDenied');
                 showToast(isArabicUI ? 'تعذر الوصول للميكروفون.' : 'Microphone access denied.', 'error');
             } else if (code === 'language-not-supported') {
-                recognizer.zkFatal = true;
+                fatal = true;
                 showVoiceAlert('voiceAlertLangUnsupported');
                 showToast(isArabicUI ? 'اللغة المحددة غير مدعومة في متصفحك.' : 'Selected language is not supported by your browser.', 'error');
             } else if (code === 'network') {
-                recognizer.zkFatal = true;
+                fatal = true;
                 showVoiceAlert('voiceAlertNetwork');
             } else if (code === 'audio-capture') {
-                if (!handleAudioCaptureConflict()) {
-                    recognizer.zkFatal = true;
-                    showVoiceAlert('voiceAlertAudioCapture');
-                }
+                if (handleAudioCaptureConflict()) return;
+                fatal = true;
+                showVoiceAlert('voiceAlertAudioCapture');
             }
+            if (!fatal) return;
+            recognizer.zkFatal = true;
+            // Nothing is being captured any more: end the session instead of leaving the UI "recording".
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') stopVoiceRecording();
         }
 
         // Returns true when recognition started.
         function startSpeechRecognition() {
             if (!SpeechRecognitionCtor) {
                 showVoiceAlert('speechRecognitionUnsupported');
-                showToast(translations[currentLang].speechRecognitionUnsupported, 'error');
                 return false;
             }
             clearTimeout(recognitionRestartTimer);
+            const session = recordingSession;
 
             let recognizer;
             try {
@@ -2885,6 +3048,7 @@
             recognizer.maxAlternatives = 1;
 
             recognizer.onresult = event => {
+                if (session !== recordingSession) return;
                 try {
                     const finalPieces = [];
                     const interimPieces = [];
@@ -2905,15 +3069,19 @@
                 }
             };
 
-            recognizer.onerror = event => handleRecognitionError(recognizer, event);
+            recognizer.onerror = event => {
+                if (session !== recordingSession) return;
+                handleRecognitionError(recognizer, event);
+            };
 
             // Browsers end continuous recognition after silence; restart while still recording.
             recognizer.onend = () => {
+                if (session !== recordingSession) return;
                 if (!isRecordingVoice || speechRecognizer !== recognizer || recognizer.zkFatal) return;
                 committedTranscript = `${finalTranscript} ${interimTranscript}`.trim();
                 finalTranscript = committedTranscript;
                 interimTranscript = '';
-                scheduleRecognitionRestart(recognizer);
+                scheduleRecognitionRestart(recognizer, session);
             };
 
             speechRecognizer = recognizer;
@@ -2941,7 +3109,7 @@
             }
             try {
                 if (abort) recognizer.abort();
-                else recognizer.stop();
+                else recognizer.stop();   // handlers stay attached so the last words still arrive
             } catch (err) { /* already stopped */ }
         }
 
@@ -2952,10 +3120,16 @@
             }
         }
 
-        /* ---------- Recording control ---------- */
+        /* ---------- Audio capture ---------- */
+        function pickRecorderMimeType() {
+            if (typeof MediaRecorder.isTypeSupported !== 'function') return '';
+            return ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus']
+                .find(type => MediaRecorder.isTypeSupported(type)) || '';
+        }
+
         function showRecordedAudio(mimeType) {
             if (!audioChunks.length) return;
-            const type = mimeType || 'audio/webm';
+            const type = (mimeType || 'audio/webm').split(';')[0];
             const audioBlob = new Blob(audioChunks, { type });
             if (lastRecordingUrl) URL.revokeObjectURL(lastRecordingUrl);
             lastRecordingUrl = URL.createObjectURL(audioBlob);
@@ -2968,60 +3142,89 @@
             showToast(currentLang === 'ar' ? 'تم حفظ التسجيل الصوتي بنجاح!' : 'Voice recording saved successfully!');
         }
 
-        async function startVoiceRecording() {
-            if (isRecordingVoice) return;
-            clearVoiceAlert();
-            stopSpeech(); // keep the reference voice out of the student's recording
-            audioChunks = [];
-            audioCaptureFallbackUsed = false;
+        // Returns true when the microphone is being recorded.
+        async function startAudioCapture(session) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                if (session !== recordingSession || !isRecordingVoice) {
+                    stream.getTracks().forEach(track => track.stop());   // user stopped / reset while the permission prompt was open
+                    return false;
+                }
+                mediaStream = stream;
+                const mimeType = pickRecorderMimeType();
+                const recorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+                mediaRecorder = recorder;
+                recorder.ondataavailable = event => {
+                    if (event.data && event.data.size > 0) audioChunks.push(event.data);
+                };
+                recorder.onstop = () => {
+                    if (session === recordingSession) showRecordedAudio(recorder.mimeType);
+                    releaseMicrophone();
+                };
+                recorder.start();
+                return true;
+            } catch (err) {
+                releaseMicrophone();
+                mediaRecorder = null;
+                const name = err && err.name;
+                if (name === 'NotFoundError' || name === 'DevicesNotFoundError') showVoiceAlert('voiceAlertMicMissing');
+                else if (name === 'NotReadableError' || name === 'AbortError') showVoiceAlert('voiceAlertMicBusy');
+                else if (name === 'NotSupportedError' || name === 'TypeError') showVoiceAlert('voiceAlertMicUnsupported');
+                else showVoiceAlert('voiceAlertMicDenied');
+                showToast(currentLang === 'ar' ? 'تعذر الوصول للميكروفون.' : 'Microphone access denied.', 'error');
+                return false;
+            }
+        }
+
+        /* ---------- Recording control ---------- */
+        function clearTranscriptState() {
             committedTranscript = '';
             finalTranscript = '';
             interimTranscript = '';
-            const textBox = document.getElementById('recognizedTextBox');
-            if (textBox) textBox.value = '';
+            audioChunks = [];
+            const box = document.getElementById('recognizedTextBox');
+            if (box) box.value = '';
+            const playback = document.getElementById('audioPlaybackContainer');
+            if (playback) playback.classList.add('hidden');
+        }
+
+        async function startVoiceRecording() {
+            if (isRecordingVoice) return;
+            clearVoiceAlert();
+            stopSpeech();                       // keep the reference voice out of the student's recording
+            const session = ++recordingSession;
+            audioCaptureFallbackUsed = false;
+            clearTranscriptState();
 
             const canRecordAudio = !!(navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === 'function' && typeof MediaRecorder !== 'undefined');
-            if (!canRecordAudio && !SpeechRecognitionCtor) {
-                showVoiceAlert('voiceAlertMicUnsupported');
-                showToast(currentLang === 'ar' ? 'تعذر الوصول للميكروفون.' : 'Microphone access denied.', 'error');
+            const saveToggle = document.getElementById('saveAudioToggle');
+            const wantAudio = canRecordAudio && (!saveToggle || saveToggle.checked);
+
+            if (!wantAudio && !SpeechRecognitionCtor) {
+                showVoiceAlert(canRecordAudio ? 'speechRecognitionUnsupported' : 'voiceAlertMicUnsupported');
+                showToast(currentLang === 'ar' ? 'تعذر بدء التسجيل على هذا المتصفح.' : 'Recording is not available in this browser.', 'error');
+                refreshMatchUI();
                 return;
             }
 
-            // 1) Microphone permission + audio capture (optional when only transcription is possible).
-            if (canRecordAudio) {
-                try {
-                    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    const recorder = new MediaRecorder(mediaStream);
-                    mediaRecorder = recorder;
-                    recorder.ondataavailable = event => {
-                        if (event.data && event.data.size > 0) audioChunks.push(event.data);
-                    };
-                    recorder.onstop = () => {
-                        showRecordedAudio(recorder.mimeType);
-                        releaseMicrophone();
-                    };
-                    recorder.start();
-                } catch (err) {
-                    releaseMicrophone();
-                    mediaRecorder = null;
-                    isRecordingVoice = false;
-                    setRecorderButtons(false);
-                    const name = err && err.name;
-                    if (name === 'NotFoundError' || name === 'DevicesNotFoundError') showVoiceAlert('voiceAlertMicMissing');
-                    else if (name === 'NotReadableError' || name === 'AbortError') showVoiceAlert('voiceAlertMicBusy');
-                    else if (name === 'NotSupportedError' || name === 'TypeError') showVoiceAlert('voiceAlertMicUnsupported');
-                    else showVoiceAlert('voiceAlertMicDenied');
-                    showToast(currentLang === 'ar' ? 'تعذر الوصول للميكروفون.' : 'Microphone access denied.', 'error');
-                    return;
-                }
-            } else {
-                mediaRecorder = null;
-            }
-
-            // 2) Live transcription into the read-only box.
+            // Show the recording state immediately (the microphone permission prompt can take a while).
             isRecordingVoice = true;
             document.getElementById('recorderStatus').textContent = currentLang === 'ar' ? '🔴 جاري التسجيل...' : '🔴 Recording...';
             setRecorderButtons(true);
+            refreshMatchUI();
+
+            if (wantAudio) {
+                const audioOk = await startAudioCapture(session);
+                if (session !== recordingSession || !isRecordingVoice) return;   // stopped or reset meanwhile
+                if (!audioOk && !SpeechRecognitionCtor) {
+                    isRecordingVoice = false;
+                    setRecorderButtons(false);
+                    document.getElementById('recorderStatus').textContent = translations[currentLang].recorderReady;
+                    refreshMatchUI();
+                    return;
+                }
+            }
+
             startSpeechRecognition();
             refreshMatchUI();
         }
@@ -3043,36 +3246,52 @@
             updateRecognizedTextBox();
         }
 
-        // Clears the workspace recorder (used when a lesson is (re)rendered or the student logs out).
+        // Clears the workspace recorder (used by the reset button, when a lesson is (re)rendered, and on logout).
         function resetRecorderUI() {
+            recordingSession++;                 // ignore any late callback from the previous recording
             isRecordingVoice = false;
             stopSpeechRecognition(true);
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            if (mediaRecorder) {
                 mediaRecorder.onstop = null;
-                try { mediaRecorder.stop(); } catch (err) { /* already stopped */ }
+                if (mediaRecorder.state !== 'inactive') {
+                    try { mediaRecorder.stop(); } catch (err) { /* already stopped */ }
+                }
+                mediaRecorder = null;
             }
             releaseMicrophone();
-            committedTranscript = '';
-            finalTranscript = '';
-            interimTranscript = '';
-            audioChunks = [];
-            const box = document.getElementById('recognizedTextBox');
-            if (box) box.value = '';
+            clearTranscriptState();
             const status = document.getElementById('recorderStatus');
             if (status) status.textContent = translations[currentLang].recorderReady;
-            const playback = document.getElementById('audioPlaybackContainer');
-            if (playback) playback.classList.add('hidden');
             setRecorderButtons(false);
             refreshMatchUI();
         }
 
-        // Recompute the ratio whenever the TTS reference text changes.
+        /* ---------- Wiring ---------- */
+        // Recompute the ratio whenever the reference text changes.
         document.getElementById('ttsTextInput').addEventListener('input', refreshMatchUI);
+
+        // Without speech recognition the student types / dictates the text, and the ring still updates automatically.
+        if (!SpeechRecognitionCtor) {
+            document.getElementById('recognizedTextBox').addEventListener('input', event => {
+                committedTranscript = '';
+                finalTranscript = event.target.value.trim();
+                interimTranscript = '';
+                refreshMatchUI();
+            });
+        }
+
+        // Saving the audio file can block live transcription on phones, so it is off by default there.
+        (function initSaveAudioToggle() {
+            const toggle = document.getElementById('saveAudioToggle');
+            if (toggle) toggle.checked = !IS_MOBILE_DEVICE;
+        })();
 
         // Browser-compatibility notice shown once at load (recording still works without speech recognition).
         if (!SpeechRecognitionCtor) showVoiceAlert('speechRecognitionUnsupported');
         else if (!('speechSynthesis' in window)) showVoiceAlert('voiceAlertTtsUnsupported');
         onTtsRateChange();
+        refreshMatchUI();
+
 
         /* ==========================================================
            11. MCQ QUIZ SUBMISSION, RESULTS TABLE & STUDENT CERTIFICATE
