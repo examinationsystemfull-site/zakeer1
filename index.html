@@ -126,9 +126,72 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* ===== STUDENT CERTIFICATE: multi-theme + bilingual engine ===== */
+        #certificatePrintableArea{
+            --c-bg:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);
+            --c-border:#fbbf24;--c-acc:#fcd34d;--c-acc2:#f59e0b;--c-ink:#1c1303;
+            --c-text:#ffffff;--c-muted:#e2e8f0;--c-dim:#cbd5e1;
+            --c-panel:rgba(255,255,255,.07);--c-line:rgba(252,211,77,.38);
+            position:relative;overflow:hidden;text-align:center;border-radius:1.5rem;
+            border:4px solid var(--c-border);background:var(--c-bg);color:var(--c-text);
+            box-shadow:0 25px 50px -12px rgba(0,0,0,.6);padding:clamp(1.25rem,4vw,3rem);
+            direction:rtl;-webkit-print-color-adjust:exact;print-color-adjust:exact;
+        }
+        #certificatePrintableArea[data-cert-lang="en"]{direction:ltr}
+        #certificatePrintableArea[data-cert-theme="gold"]{--c-bg:linear-gradient(135deg,#0f172a 0%,#1e1b4b 50%,#0f172a 100%);--c-border:#fbbf24;--c-acc:#fcd34d;--c-acc2:#f59e0b;--c-ink:#1c1303;--c-line:rgba(252,211,77,.38)}
+        #certificatePrintableArea[data-cert-theme="pink"]{--c-bg:linear-gradient(135deg,#3b0a2a 0%,#5b0f3f 50%,#2a0620 100%);--c-border:#f472b6;--c-acc:#fbcfe8;--c-acc2:#ec4899;--c-ink:#500724;--c-muted:#fce7f3;--c-dim:#fbcfe8;--c-line:rgba(249,168,212,.4)}
+        #certificatePrintableArea[data-cert-theme="green"]{--c-bg:linear-gradient(135deg,#022c22 0%,#064e3b 50%,#022c22 100%);--c-border:#34d399;--c-acc:#a7f3d0;--c-acc2:#10b981;--c-ink:#022c22;--c-muted:#d1fae5;--c-dim:#a7f3d0;--c-line:rgba(110,231,183,.4)}
+        #certificatePrintableArea[data-cert-theme="blue"]{--c-bg:linear-gradient(135deg,#0b1d44 0%,#14307a 50%,#0b1d44 100%);--c-border:#60a5fa;--c-acc:#bfdbfe;--c-acc2:#3b82f6;--c-ink:#0b1d44;--c-muted:#dbeafe;--c-dim:#bfdbfe;--c-line:rgba(147,197,253,.4)}
+        #certificatePrintableArea[data-cert-theme="purple"]{--c-bg:linear-gradient(135deg,#2e1065 0%,#4c1d95 50%,#2e1065 100%);--c-border:#a78bfa;--c-acc:#ddd6fe;--c-acc2:#8b5cf6;--c-ink:#2e1065;--c-muted:#ede9fe;--c-dim:#ddd6fe;--c-line:rgba(196,181,253,.4)}
+        #certificatePrintableArea[data-cert-theme="slate"]{--c-bg:linear-gradient(135deg,#0f172a 0%,#1f2937 50%,#0f172a 100%);--c-border:#94a3b8;--c-acc:#e2e8f0;--c-acc2:#94a3b8;--c-ink:#0f172a;--c-muted:#e2e8f0;--c-dim:#cbd5e1;--c-line:rgba(203,213,225,.4)}
+        #certificatePrintableArea[data-cert-theme="teal"]{--c-bg:linear-gradient(135deg,#042f2e 0%,#115e59 50%,#042f2e 100%);--c-border:#2dd4bf;--c-acc:#99f6e4;--c-acc2:#14b8a6;--c-ink:#042f2e;--c-muted:#ccfbf1;--c-dim:#99f6e4;--c-line:rgba(94,234,212,.4)}
+        #certificatePrintableArea .cert-ar,#certificatePrintableArea .cert-en{display:block;overflow-wrap:anywhere}
+        #certificatePrintableArea .cert-ar{direction:rtl;font-family:'Tajawal','Inter',sans-serif}
+        #certificatePrintableArea .cert-en{direction:ltr;unicode-bidi:isolate;font-family:'Inter','Tajawal',sans-serif}
+        #certificatePrintableArea[data-cert-lang="ar"] .cert-en{display:none}
+        #certificatePrintableArea[data-cert-lang="en"] .cert-ar{display:none}
+        #certificatePrintableArea[data-cert-lang="both"] .cert-en{font-size:.82em;opacity:.9;margin-top:.1rem}
+        #certificatePrintableArea .cert-corner{position:absolute;width:3rem;height:3rem;border:0 solid var(--c-border);opacity:.75;pointer-events:none}
+        #certificatePrintableArea .cert-c-tr{top:.75rem;right:.75rem;border-top-width:2px;border-right-width:2px;border-top-right-radius:.75rem}
+        #certificatePrintableArea .cert-c-tl{top:.75rem;left:.75rem;border-top-width:2px;border-left-width:2px;border-top-left-radius:.75rem}
+        #certificatePrintableArea .cert-c-br{bottom:.75rem;right:.75rem;border-bottom-width:2px;border-right-width:2px;border-bottom-right-radius:.75rem}
+        #certificatePrintableArea .cert-c-bl{bottom:.75rem;left:.75rem;border-bottom-width:2px;border-left-width:2px;border-bottom-left-radius:.75rem}
+        #certificatePrintableArea .cert-inner{position:relative;z-index:1;width:100%;display:flex;flex-direction:column;gap:1.1rem;align-items:center}
+        #certificatePrintableArea .cert-seal{width:4rem;height:4rem;border-radius:1rem;display:flex;align-items:center;justify-content:center;font-size:1.9rem;color:var(--c-ink);background:linear-gradient(135deg,var(--c-acc2),var(--c-acc));box-shadow:0 10px 25px -8px var(--c-acc2)}
+        #certificatePrintableArea .cert-kicker{font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c-acc)}
+        #certificatePrintableArea .cert-title{font-size:clamp(1.45rem,5vw,2.35rem);font-weight:900;color:var(--c-text);line-height:1.25;margin-top:.15rem}
+        #certificatePrintableArea .cert-sub{font-size:.85rem;color:var(--c-acc);font-weight:600;margin-top:.2rem}
+        #certificatePrintableArea .cert-text{font-size:.9rem;color:var(--c-muted);line-height:1.8;max-width:36rem}
+        #certificatePrintableArea .cert-namebox{max-width:100%;padding:.5rem 1.5rem;border-radius:1rem;background:var(--c-panel);border:1px solid var(--c-line)}
+        #certificatePrintableArea .cert-name{font-size:clamp(1.3rem,4.5vw,2rem);font-weight:800;color:var(--c-acc);overflow-wrap:anywhere;word-break:break-word}
+        #certificatePrintableArea .cert-lesson{display:inline-block;margin-top:.3rem;font-size:1.1rem;font-weight:700;color:var(--c-text);overflow-wrap:anywhere;word-break:break-word}
+        #certificatePrintableArea .cert-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;width:100%;max-width:40rem}
+        @media (min-width:640px){#certificatePrintableArea .cert-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+        #certificatePrintableArea .cert-stat{padding:.7rem .5rem;border-radius:1rem;background:var(--c-panel);border:1px solid var(--c-line);min-width:0}
+        #certificatePrintableArea .cert-stat-label{font-size:.7rem;color:var(--c-dim)}
+        #certificatePrintableArea .cert-stat-val{margin-top:.2rem;font-size:1.05rem;font-weight:800;color:var(--c-text);overflow-wrap:anywhere}
+        #certificatePrintableArea .cert-stat-val.is-acc{color:var(--c-acc)}
+        #certificatePrintableArea .cert-foot{width:100%;display:grid;grid-template-columns:1fr;gap:.9rem;align-items:end;padding-top:1rem;border-top:1px solid var(--c-line);font-size:.72rem;color:var(--c-dim)}
+        @media (min-width:640px){#certificatePrintableArea .cert-foot{grid-template-columns:repeat(3,minmax(0,1fr))}}
+        #certificatePrintableArea .cert-sigline{display:block;width:70%;max-width:9rem;height:0;border-top:1.5px solid var(--c-acc);margin:0 auto .35rem}
+        #certificatePrintableArea .cert-serial{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--c-acc);font-size:.75rem;direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}
+        #certificatePrintableArea .cert-sealtxt{font-weight:700;color:var(--c-acc)}
+        .cert-swatch{display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .65rem;border-radius:.85rem;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#e2e8f0;font-size:.75rem;font-weight:600;cursor:pointer;transition:.2s}
+        .cert-swatch:hover{background:rgba(255,255,255,.14)}
+        .cert-swatch .cert-dot{width:1rem;height:1rem;border-radius:9999px;background:linear-gradient(135deg,var(--sw),var(--sw2));border:1px solid rgba(255,255,255,.5)}
+        .cert-swatch.is-active{border-color:var(--sw);box-shadow:0 0 0 2px var(--sw)}
+        .cert-langbtn{padding:.4rem .9rem;font-size:.75rem;font-weight:700;color:#e2e8f0;background:rgba(255,255,255,.06);transition:.2s}
+        .cert-langbtn:hover{background:rgba(255,255,255,.16)}
+        .cert-langbtn.is-active{background:#f59e0b;color:#1c1303}
         @media print {
             body * {
                 visibility: hidden;
+            }
+            #studentCertificateModal {
+                background: transparent !important;
+                -webkit-backdrop-filter: none !important;
+                backdrop-filter: none !important;
+                overflow: visible !important;
             }
             #certificatePrintableArea, #certificatePrintableArea * {
                 visibility: visible;
@@ -138,7 +201,8 @@
                 inset: 0;
                 width: 100%;
                 height: 100%;
-                background: #0f172a !important;
+                border-radius: 0 !important;
+                background: var(--c-bg) !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 z-index: 9999;
@@ -342,6 +406,7 @@
                 <div class="flex items-center space-x-2 rtl:space-x-reverse bg-white/5 p-1.5 rounded-2xl border border-white/10">
                     <button onclick="switchStudentTab('lesson')" id="tabBtnLesson" class="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white transition shadow" data-i18n="tabLesson">استعراض الدرس</button>
                     <button onclick="switchStudentTab('results')" id="tabBtnResults" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition" data-i18n="tabResults">نتائجي وشهاداتي</button>
+                    <button onclick="switchStudentTab('lessons')" id="tabBtnLessons" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition" data-zk-ar="عرض الدروس" data-zk-en="View Lessons">عرض الدروس</button>
                 </div>
             </div>
 
@@ -700,7 +765,10 @@
                         <i class="fa-solid fa-envelope text-indigo-400"></i><span>رسائلي مع المدير / My Messages</span>
                         <span id="stuUnreadBadge" class="hidden px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold">0</span>
                     </h3>
-                    <button type="button" onclick="renderAllMessages()" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-indigo-300 transition"><i class="fa-solid fa-rotate"></i></button>
+                    <div class="flex items-center gap-2 flex-wrap justify-end">
+                        <button type="button" id="admMsgDeleteAllBtn" onclick="openMsgDeleteAllModal()" class="px-3.5 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/40 text-xs font-bold transition flex items-center gap-1.5"><i class="fa-solid fa-trash-can"></i><span>حذف جميع الرسائل / Delete all messages</span></button>
+                        <button type="button" onclick="renderAllMessages()" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-indigo-300 transition" title="تحديث / Refresh"><i class="fa-solid fa-rotate"></i></button>
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <form onsubmit="handleSendMessage(event,'stu')" class="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/10 h-fit">
@@ -721,6 +789,32 @@
                     </div>
                 </div>
             </div></div>
+            </div>
+
+            <!-- TAB 3: CUSTOM LESSONS VIEWER (عرض الدروس) -->
+            <div id="studentTabLessons" class="hidden space-y-6">
+                <div class="glass-card p-5 sm:p-6 rounded-3xl border border-indigo-500/30 space-y-4">
+                    <div class="flex items-center justify-between gap-3">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-book-open text-indigo-400"></i><span class="" data-zk-ar="الدروس المخصصة لك" data-zk-en="Lessons assigned to you">الدروس المخصصة لك</span></h3>
+                        <span id="zkStCount" class="px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-xs text-indigo-200">0</span>
+                    </div>
+                    <div id="zkStCards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <div id="zkStEmpty" class="hidden text-center py-10 space-y-2">
+                        <i class="fa-regular fa-folder-open text-4xl text-slate-500"></i>
+                        <p class="text-sm text-slate-300"><span class="" data-zk-ar="لا توجد دروس مخصصة لك حاليًا" data-zk-en="No lessons are assigned to you right now">لا توجد دروس مخصصة لك حاليًا</span></p>
+                    </div>
+                </div>
+                <div id="zkViewerArea" class="hidden space-y-4">
+                    <div class="glass-card p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3">
+                        <h4 id="zkViewerTitle" class="text-base font-bold text-white break-words"></h4>
+                        <div class="flex gap-2">
+                            <button type="button" id="zkStPrev" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs text-slate-200 disabled:opacity-40 transition"><span class="" data-zk-ar="السابق" data-zk-en="Previous">السابق</span></button>
+                            <button type="button" id="zkStNext" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs text-slate-200 disabled:opacity-40 transition"><span class="" data-zk-ar="التالي" data-zk-en="Next">التالي</span></button>
+                        </div>
+                    </div>
+                    <div id="zkGenericContent" class="hidden glass-card p-5 sm:p-6 rounded-3xl"></div>
+                    <div id="zkViewerHost" class="space-y-8"></div>
+                </div>
             </div>
 
             <!-- TAB 2: MY RESULTS & CERTIFICATES (نتائجي وشهاداتي) -->
@@ -815,6 +909,12 @@
                 </div>
             </div>
 
+            <!-- Admin tabs -->
+            <div class="flex flex-wrap items-center gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10 w-full sm:w-fit">
+                <button type="button" id="zkAdmTabBtnGeneral" onclick="zkAdminTab('general')" class="px-4 py-2 rounded-xl text-sm font-medium bg-violet-600 text-white transition shadow" data-zk-ar="الإدارة العامة" data-zk-en="General">الإدارة العامة</button>
+                <button type="button" id="zkAdmTabBtnLessons" onclick="zkAdminTab('lessons')" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition" data-zk-ar="تخصيص الدروس" data-zk-en="Lesson Targeting">تخصيص الدروس</button>
+            </div>
+            <div id="zkAdmTabGeneral" class="space-y-8">
             <!-- Admin Section 1: AI Lesson Generator & Exporter -->
             <div class="glass-card p-6 sm:p-8 rounded-3xl space-y-6 border border-violet-500/30 shadow-2xl">
                 <div class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -917,6 +1017,14 @@
                             <span>حذف جميع المستخدمين دفعة واحدة / Delete all users</span>
                         </button>
                     </div>
+                    <div class="px-6 py-4 border-b border-white/10 bg-white/5" id="studentSmartQueryBar">
+                        <div class="relative flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass absolute top-1/2 -translate-y-1/2 start-4 text-violet-300 text-sm pointer-events-none"></i>
+                            <input type="text" id="studentSmartQuery" autocomplete="off" spellcheck="false" oninput="onStudentQueryInput(this.value)" onkeydown="if(event.key==='Escape'){clearStudentQuery();}" class="w-full ps-10 pe-4 py-2.5 rounded-xl glass-input text-sm" placeholder="بحث ذكي: اسم الطالب أو كلمة المرور / Smart search: student name or password" aria-label="Student smart search">
+                            <button type="button" id="studentQueryClear" onclick="clearStudentQuery()" class="hidden shrink-0 px-3.5 py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 text-xs font-bold transition flex items-center gap-1.5" title="مسح البحث / Clear search"><i class="fa-solid fa-xmark"></i><span>مسح / Clear</span></button>
+                        </div>
+                        <div id="studentQueryInfo" class="hidden mt-2 text-xs text-slate-300"></div>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right rtl:text-right ltr:text-left text-sm">
                             <thead class="bg-white/5 text-xs text-violet-300 uppercase border-b border-white/10">
@@ -924,7 +1032,6 @@
                                     <th class="px-4 py-4" data-i18n="thUsername">اسم المستخدم</th>
                                     <th class="px-4 py-4" data-i18n="thPassword">كلمة المرور</th>
                                     <th class="px-4 py-4" data-i18n="thRegDate">تاريخ التسجيل</th>
-                                    <th class="px-4 py-4" data-i18n="thResultsSummary">النتائج</th>
                                     <th class="px-4 py-4" data-i18n="thManualNotes">ملاحظات يدوية</th>
                                     <th class="px-4 py-4" data-i18n="thActions">الإجراءات</th>
                                 </tr>
@@ -967,13 +1074,37 @@
                         <textarea id="admMsgText" required rows="4" maxlength="2000" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm resize-none" placeholder="المحتوى / Message"></textarea>
                         <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-lg flex items-center justify-center space-x-2 rtl:space-x-reverse"><i class="fa-solid fa-paper-plane"></i><span>إرسال / Send</span></button>
                     </form>
-                    <div class="lg:col-span-2 overflow-x-auto rounded-2xl border border-white/10 max-h-[28rem] overflow-y-auto">
-                        <table class="w-full text-right rtl:text-right ltr:text-left text-sm">
-                            <thead class="bg-white/5 text-xs text-indigo-300 uppercase border-b border-white/10 sticky top-0"><tr>
-                                <th class="px-3 py-3">الاتجاه / Dir</th><th class="px-3 py-3">الطرف الآخر / Party</th><th class="px-3 py-3">العنوان والمحتوى / Message</th><th class="px-3 py-3">الوقت / Time</th><th class="px-3 py-3">الحالة / Status</th>
-                            </tr></thead>
-                            <tbody id="admMsgTable" class="divide-y divide-white/10"></tbody>
-                        </table>
+                    <div class="lg:col-span-2 space-y-3 min-w-0">
+                        <div id="admMsgFilterBar" class="bg-white/5 border border-white/10 rounded-2xl p-3 space-y-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <div class="relative">
+                                    <i class="fa-solid fa-magnifying-glass absolute top-1/2 -translate-y-1/2 start-3 text-indigo-300 text-xs pointer-events-none"></i>
+                                    <input type="text" id="admMsgFilterName" autocomplete="off" oninput="onAdmMsgFilterChange()" class="w-full ps-8 pe-3 py-2 rounded-xl glass-input text-xs" placeholder="اسم الطالب / Student name" aria-label="Student name filter">
+                                </div>
+                                <select id="admMsgFilterDir" onchange="onAdmMsgFilterChange()" class="w-full px-3 py-2 rounded-xl glass-input text-xs" aria-label="Direction filter">
+                                    <option value="all">الكل: وارد وصادر / All directions</option>
+                                    <option value="in">وارد / Inbound</option>
+                                    <option value="out">صادر / Outbound</option>
+                                </select>
+                                <select id="admMsgFilterStatus" onchange="onAdmMsgFilterChange()" class="w-full px-3 py-2 rounded-xl glass-input text-xs" aria-label="Status filter">
+                                    <option value="all">كل الحالات / All statuses</option>
+                                    <option value="unread">غير مقروءة / Unread</option>
+                                    <option value="read">مقروءة / Read</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between gap-2 text-xs text-slate-300">
+                                <span id="admMsgFilterInfo"></span>
+                                <button type="button" id="admMsgFilterReset" onclick="resetAdmMsgFilter()" class="hidden px-3 py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 font-bold transition"><i class="fa-solid fa-xmark"></i> إعادة ضبط / Reset</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto rounded-2xl border border-white/10 max-h-[28rem] overflow-y-auto">
+                            <table class="w-full text-right rtl:text-right ltr:text-left text-sm">
+                                <thead class="bg-white/5 text-xs text-indigo-300 uppercase border-b border-white/10 sticky top-0"><tr>
+                                    <th class="px-3 py-3">الاتجاه / Dir</th><th class="px-3 py-3">الطرف الآخر / Party</th><th class="px-3 py-3">العنوان والمحتوى / Message</th><th class="px-3 py-3">الوقت / Time</th><th class="px-3 py-3">الحالة / Status</th><th class="px-3 py-3">إجراء / Action</th>
+                                </tr></thead>
+                                <tbody id="admMsgTable" class="divide-y divide-white/10"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -998,59 +1129,94 @@
                     </button>
                 </form>
             </div>
+            </div><!-- /zkAdmTabGeneral -->
+
+            <!-- Admin Tab: تخصيص الدروس -->
+            <div id="zkAdmTabLessons" class="hidden space-y-6">
+                <div class="glass-card p-5 sm:p-6 rounded-3xl border border-violet-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-layer-group text-violet-400"></i><span class="" data-zk-ar="تخصيص الدروس" data-zk-en="Lesson Targeting">تخصيص الدروس</span> <span id="zkAdmCount" class="px-2.5 py-0.5 rounded-full bg-violet-500/20 border border-violet-500/30 text-xs text-violet-200">0</span></h3>
+                        <p class="text-xs text-slate-300 mt-1"><span class="" data-zk-ar="استورد درسًا من ملف JSON ثم حدّد من يراه من الطلاب." data-zk-en="Import a lesson from JSON, then choose which students can see it.">استورد درسًا من ملف JSON ثم حدّد من يراه من الطلاب.</span></p>
+                    </div>
+                    <button type="button" onclick="zkOpenImport()" class="px-5 py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-medium text-sm transition shadow-lg shadow-violet-600/30 flex items-center justify-center gap-2"><i class="fa-solid fa-file-import"></i><span class="" data-zk-ar="إنشاء درس" data-zk-en="Create lesson">إنشاء درس</span></button>
+                </div>
+                <div id="zkAdmCards" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5"></div>
+                <div id="zkAdmEmpty" class="glass-card p-10 rounded-3xl text-center text-sm text-slate-300"><span class="" data-zk-ar="لا توجد دروس بعد. اضغط "إنشاء درس" لاستيراد أول درس." data-zk-en="No lessons yet. Click "Create lesson" to import your first one.">لا توجد دروس بعد. اضغط "إنشاء درس" لاستيراد أول درس.</span></div>
+            </div>
         </div>
 
     </main>
 
-    <!-- STUDENT CERTIFICATE MODAL (شهادة الطالب التفاعلية) -->
-    <div id="studentCertificateModal" onclick="closeCertificateModal(event)" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-        <div onclick="event.stopPropagation()" class="w-full max-w-3xl space-y-4">
+    <!-- STUDENT CERTIFICATE MODAL (شهادة الطالب التفاعلية) — multi-theme + bilingual -->
+    <div id="studentCertificateModal" onclick="closeCertificateModal(event)" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex justify-center p-3 sm:p-4 overflow-y-auto">
+        <div onclick="event.stopPropagation()" class="w-full max-w-3xl space-y-4 my-auto">
+            <!-- Theme & language controls (not printed) -->
+            <div class="glass-card rounded-2xl p-3 sm:p-4 border border-white/10 space-y-3">
+                <div class="flex flex-col gap-1.5">
+                    <span class="text-[11px] font-semibold text-slate-300"><i class="fa-solid fa-palette"></i> قالب الشهادة / Certificate theme</span>
+                    <div id="certThemeBar" class="flex flex-wrap gap-2" role="radiogroup" aria-label="Certificate theme"></div>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <span class="text-[11px] font-semibold text-slate-300"><i class="fa-solid fa-language"></i> لغة الشهادة / Certificate language</span>
+                    <div id="certLangBar" class="inline-flex self-start rounded-xl overflow-hidden border border-white/15" role="radiogroup" aria-label="Certificate language"></div>
+                </div>
+            </div>
+
             <!-- Printable Certificate Card -->
-            <div id="certificatePrintableArea" class="relative rounded-3xl p-8 sm:p-12 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border-4 border-amber-400/70 shadow-2xl text-center overflow-hidden">
-                <!-- Decorative Corner Accents -->
-                <div class="absolute top-3 right-3 w-12 h-12 border-t-2 border-r-2 border-amber-400/60 rounded-tr-xl"></div>
-                <div class="absolute top-3 left-3 w-12 h-12 border-t-2 border-l-2 border-amber-400/60 rounded-tl-xl"></div>
-                <div class="absolute bottom-3 right-3 w-12 h-12 border-b-2 border-r-2 border-amber-400/60 rounded-br-xl"></div>
-                <div class="absolute bottom-3 left-3 w-12 h-12 border-b-2 border-l-2 border-amber-400/60 rounded-bl-xl"></div>
+            <div id="certificatePrintableArea" data-cert-theme="gold" data-cert-lang="ar" dir="rtl">
+                <div class="cert-corner cert-c-tr"></div>
+                <div class="cert-corner cert-c-tl"></div>
+                <div class="cert-corner cert-c-br"></div>
+                <div class="cert-corner cert-c-bl"></div>
 
-                <div class="space-y-5 relative z-10">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-950 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-amber-500/30">
-                        <i class="fa-solid fa-award"></i>
-                    </div>
+                <div class="cert-inner">
+                    <div class="cert-seal"><i class="fa-solid fa-award"></i></div>
                     <div>
-                        <p class="text-xs font-bold tracking-widest text-amber-300 uppercase" data-i18n="certPlatformHeader">منصة ذاكر التعليمية - Zakker Platform</p>
-                        <h2 class="text-2xl sm:text-4xl font-black text-white mt-1" data-i18n="certMainTitle">شهادة إتمام ونجاح</h2>
+                        <p class="cert-kicker"><span class="cert-ar">منصة ذاكر التعليمية</span><span class="cert-en">Zakker Educational Platform</span></p>
+                        <h2 class="cert-title"><span class="cert-ar">شهادة إتمام ونجاح</span><span class="cert-en">Certificate of Completion &amp; Success</span></h2>
+                        <p class="cert-sub"><span class="cert-ar">تقدير وتميّز أكاديمي</span><span class="cert-en">Academic Excellence &amp; Recognition</span></p>
                     </div>
 
-                    <p class="text-sm text-slate-300" data-i18n="certIntroText">تشهد إدارة منصة ذاكر التعليمية بأن الطالب / الطالبة:</p>
-                    <div class="py-2 px-6 rounded-2xl bg-white/5 border border-amber-400/30 inline-block">
-                        <h3 id="certStudentName" class="text-2xl sm:text-3xl font-extrabold text-amber-300">اسم الطالب</h3>
+                    <p class="cert-text"><span class="cert-ar">تشهد إدارة منصة ذاكر التعليمية بأن الطالب / الطالبة:</span><span class="cert-en">The management of Zakker Educational Platform hereby certifies that the student:</span></p>
+                    <div class="cert-namebox">
+                        <h3 id="certStudentName" class="cert-name">اسم الطالب</h3>
                     </div>
 
-                    <p class="text-sm text-slate-300 max-w-xl mx-auto leading-relaxed">
-                        <span data-i18n="certBodyPrefix">قد أتمّ بنجاح الاختبار التقييمي الخاص بدرس:</span>
-                        <br>
-                        <strong id="certLessonTitle" class="text-lg text-white font-bold mt-1 inline-block">عنوان الدرس</strong>
+                    <p class="cert-text">
+                        <span class="cert-ar">قد أتمّ بنجاح الاختبار التقييمي الخاص بدرس:</span>
+                        <span class="cert-en">has successfully completed the assessment quiz for the lesson:</span>
+                        <strong id="certLessonTitle" class="cert-lesson">عنوان الدرس</strong>
                     </p>
 
-                    <div class="grid grid-cols-3 gap-3 max-w-lg mx-auto pt-2">
-                        <div class="p-3 rounded-2xl bg-white/5 border border-white/10">
-                            <div class="text-[11px] text-slate-400" data-i18n="certScoreLabel">الدرجة</div>
-                            <div id="certScoreValue" class="text-base sm:text-lg font-extrabold text-white mt-0.5">10 / 10</div>
+                    <div class="cert-grid">
+                        <div class="cert-stat">
+                            <div class="cert-stat-label"><span class="cert-ar">الدرجة</span><span class="cert-en">Score</span></div>
+                            <div id="certScoreValue" dir="ltr" class="cert-stat-val">10 / 10</div>
                         </div>
-                        <div class="p-3 rounded-2xl bg-white/5 border border-white/10">
-                            <div class="text-[11px] text-slate-400" data-i18n="certPercentLabel">النسبة المئوية</div>
-                            <div id="certPercentValue" class="text-base sm:text-lg font-extrabold text-emerald-400 mt-0.5">100%</div>
+                        <div class="cert-stat">
+                            <div class="cert-stat-label"><span class="cert-ar">النسبة المئوية</span><span class="cert-en">Percentage</span></div>
+                            <div id="certPercentValue" dir="ltr" class="cert-stat-val is-acc">100%</div>
                         </div>
-                        <div class="p-3 rounded-2xl bg-white/5 border border-white/10">
-                            <div class="text-[11px] text-slate-400" data-i18n="certDateLabel">تاريخ الإصدار</div>
-                            <div id="certDateValue" class="text-xs sm:text-sm font-bold text-indigo-300 mt-1 font-mono">2026-11-17</div>
+                        <div class="cert-stat">
+                            <div class="cert-stat-label"><span class="cert-ar">التقدير</span><span class="cert-en">Grade</span></div>
+                            <div class="cert-stat-val is-acc"><span id="certGradeAr" class="cert-ar">ممتاز</span><span id="certGradeEn" class="cert-en">Excellent</span></div>
+                        </div>
+                        <div class="cert-stat">
+                            <div class="cert-stat-label"><span class="cert-ar">تاريخ الإصدار</span><span class="cert-en">Issue Date</span></div>
+                            <div id="certDateValue" dir="ltr" class="cert-stat-val" style="font-size:.8rem;font-family:ui-monospace,Menlo,Consolas,monospace">2026-11-17</div>
                         </div>
                     </div>
 
-                    <div class="pt-4 border-t border-white/10 flex justify-between items-center text-xs text-slate-400 px-4">
-                        <span id="certSerialNumber" class="font-mono text-amber-300/80">ID: ZKR-2026</span>
-                        <span class="font-semibold text-indigo-300" data-i18n="certSealText">ختم الاعتماد الأكاديمي الرقمي ✓</span>
+                    <div class="cert-foot">
+                        <div>
+                            <span class="cert-sigline"></span>
+                            <span class="cert-ar">توقيع إدارة المنصة</span><span class="cert-en">Platform Management Signature</span>
+                        </div>
+                        <div>
+                            <span class="cert-ar">رقم الشهادة</span><span class="cert-en">Certificate ID</span>
+                            <span id="certSerialNumber" class="cert-serial">ID: ZKR-2026</span>
+                        </div>
+                        <div class="cert-sealtxt"><span class="cert-ar">ختم الاعتماد الأكاديمي الرقمي ✓</span><span class="cert-en">Digital Academic Accreditation Seal ✓</span></div>
                     </div>
                 </div>
             </div>
@@ -1062,6 +1228,66 @@
                     <span data-i18n="printCertBtn">طباعة / حفظ الشهادة PDF</span>
                 </button>
                 <button type="button" onclick="closeCertificateModal()" class="px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-medium text-sm transition" data-i18n="closeBtn">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom lessons: import modal -->
+    <div id="zkImportModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-card p-5 sm:p-6 rounded-3xl w-full max-w-2xl max-h-[92vh] overflow-y-auto space-y-4 border border-violet-500/30 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-white/10 pb-3">
+                <h3 class="text-lg font-bold text-white"><span class="" data-zk-ar="إنشاء درس (استيراد JSON)" data-zk-en="Create lesson (JSON import)">إنشاء درس (استيراد JSON)</span></h3>
+                <button type="button" onclick="zkCloseImport()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <label class="block px-4 py-3 rounded-xl bg-violet-600/20 hover:bg-violet-600/30 text-violet-200 border border-violet-500/40 cursor-pointer text-sm font-medium text-center transition">
+                <i class="fa-solid fa-upload"></i> <span class="" data-zk-ar="اختر ملف .json" data-zk-en="Choose a .json file">اختر ملف .json</span>
+                <input type="file" id="zkImpFile" accept=".json,application/json" class="hidden" onchange="zkImportFile(event)">
+            </label>
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1"><span class="" data-zk-ar="أو الصق محتوى JSON هنا" data-zk-en="Or paste JSON here">أو الصق محتوى JSON هنا</span></label>
+                <textarea id="zkImpText" rows="7" dir="ltr" oninput="zkValidateImport()" class="w-full px-4 py-3 rounded-xl glass-input text-xs font-mono" placeholder='{"title": "...", "description": "...", "content": []}'></textarea>
+            </div>
+            <div id="zkImpStatus"></div>
+            <div id="zkImpPreview" class="hidden p-4 rounded-2xl bg-white/5 border border-white/10 space-y-1">
+                <div class="text-[11px] text-slate-400"><span class="" data-zk-ar="معاينة" data-zk-en="Preview">معاينة</span></div>
+                <div id="zkImpPrevTitle" class="text-base font-bold text-white break-words"></div>
+                <div id="zkImpPrevSummary" class="text-xs text-slate-300"></div>
+                <div id="zkImpPrevCounts" class="text-[11px] text-slate-400"></div>
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1"><span class="" data-zk-ar="الحالة الافتراضية بعد الحفظ" data-zk-en="Default state after saving">الحالة الافتراضية بعد الحفظ</span></label>
+                <select id="zkImpDefault" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm">
+                    <option value="hidden" data-zk-ar="مخفي عن الطلاب" data-zk-en="Hidden from students">مخفي عن الطلاب</option>
+                    <option value="all" data-zk-ar="ظاهر لجميع الطلاب" data-zk-en="Visible to all students">ظاهر لجميع الطلاب</option>
+                </select>
+            </div>
+            <div class="flex gap-3 justify-end">
+                <button type="button" onclick="zkCloseImport()" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-sm text-slate-200 transition"><span class="" data-zk-ar="إلغاء" data-zk-en="Cancel">إلغاء</span></button>
+                <button type="button" id="zkImpSave" onclick="zkSaveImport()" disabled class="px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white text-sm font-medium transition"><span class="" data-zk-ar="حفظ الدرس" data-zk-en="Save lesson">حفظ الدرس</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom lessons: targeting modal -->
+    <div id="zkTargetModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-card p-5 sm:p-6 rounded-3xl w-full max-w-lg max-h-[92vh] overflow-y-auto space-y-4 border border-violet-500/30 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-white/10 pb-3 gap-3">
+                <h3 id="zkTgTitle" class="text-base font-bold text-white break-words"></h3>
+                <button type="button" onclick="zkCloseTarget()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <label class="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/10 cursor-pointer text-sm text-slate-100">
+                <input type="checkbox" id="zkTgVisible" class="w-4 h-4 accent-indigo-500"><span class="" data-zk-ar="إظهار الدرس للطلاب" data-zk-en="Show lesson to students">إظهار الدرس للطلاب</span>
+            </label>
+            <div class="space-y-2 text-sm text-slate-200">
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="zkTgAud" value="student" class="accent-indigo-500"><span class="" data-zk-ar="طالب محدد" data-zk-en="Specific student">طالب محدد</span></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="zkTgAud" value="group" class="accent-indigo-500"><span class="" data-zk-ar="مجموعة طلاب" data-zk-en="Group of students">مجموعة طلاب</span></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="zkTgAud" value="all" class="accent-indigo-500"><span class="" data-zk-ar="جميع الطلاب المشتركين" data-zk-en="All registered students">جميع الطلاب المشتركين</span></label>
+            </div>
+            <div id="zkTgSinglePanel" class="hidden"><select id="zkTgSingle" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm"></select></div>
+            <div id="zkTgGroupPanel" class="hidden"><div id="zkTgGroup" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto"></div></div>
+            <div class="flex gap-3 justify-end">
+                <button type="button" onclick="zkCloseTarget()" class="px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-sm text-slate-200 transition"><span class="" data-zk-ar="إلغاء" data-zk-en="Cancel">إلغاء</span></button>
+                <button type="button" onclick="zkSaveTarget()" class="px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium transition"><span class="" data-zk-ar="حفظ" data-zk-en="Save">حفظ</span></button>
             </div>
         </div>
     </div>
@@ -1119,6 +1345,39 @@
             <div class="flex justify-center space-x-3 rtl:space-x-reverse pt-2">
                 <button type="button" onclick="closeBulkDeleteModal()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-slate-300">إلغاء / Cancel</button>
                 <button type="button" onclick="confirmBulkDelete()" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-semibold text-white">نعم، احذف الكل / Yes, delete all</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Delete Scope Modal -->
+    <div id="msgDeleteModal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm flex justify-center p-4 overflow-y-auto" onclick="closeMsgDeleteModal()">
+        <div onclick="event.stopPropagation()" class="glass-card p-6 rounded-3xl w-full max-w-md space-y-4 border border-rose-500/40 shadow-2xl my-auto">
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-trash"></i></div>
+                <h3 class="text-lg font-bold text-white">حذف الرسالة / Delete message</h3>
+                <p class="text-xs text-slate-300">اختر نطاق الحذف / Choose the deletion scope</p>
+            </div>
+            <div id="msgDeletePreview" class="text-xs text-slate-300 bg-white/5 border border-white/10 rounded-xl p-3 break-words"></div>
+            <div class="space-y-2">
+                <button type="button" id="msgDelBtnSender" onclick="confirmMsgDelete('sender')" class="w-full text-start px-4 py-3 rounded-xl bg-white/10 hover:bg-amber-500/20 border border-white/15 hover:border-amber-500/40 text-sm text-white transition disabled:opacity-40 disabled:cursor-not-allowed flex items-start gap-2"><i class="fa-solid fa-arrow-up mt-0.5 text-amber-300"></i><span id="msgDelLblSender"></span></button>
+                <button type="button" id="msgDelBtnRecipient" onclick="confirmMsgDelete('recipient')" class="w-full text-start px-4 py-3 rounded-xl bg-white/10 hover:bg-amber-500/20 border border-white/15 hover:border-amber-500/40 text-sm text-white transition disabled:opacity-40 disabled:cursor-not-allowed flex items-start gap-2"><i class="fa-solid fa-arrow-down mt-0.5 text-sky-300"></i><span id="msgDelLblRecipient"></span></button>
+                <button type="button" id="msgDelBtnBoth" onclick="confirmMsgDelete('both')" class="w-full text-start px-4 py-3 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 border border-rose-500/40 text-sm text-rose-200 font-semibold transition flex items-start gap-2"><i class="fa-solid fa-users-slash mt-0.5"></i><span>حذف للطرفين / Delete for both parties</span></button>
+            </div>
+            <div class="flex justify-center pt-1">
+                <button type="button" onclick="closeMsgDeleteModal()" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-slate-300">إلغاء / Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete ALL Messages Modal -->
+    <div id="msgDeleteAllModal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeMsgDeleteAllModal()">
+        <div onclick="event.stopPropagation()" class="glass-card p-6 rounded-3xl w-full max-w-sm space-y-4 border border-rose-500/40 shadow-2xl text-center">
+            <div class="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto text-2xl"><i class="fa-solid fa-trash-can"></i></div>
+            <h3 class="text-lg font-bold text-white">تأكيد حذف جميع الرسائل / Delete ALL messages</h3>
+            <p class="text-xs text-slate-300" id="msgDeleteAllMessage"></p>
+            <div class="flex justify-center space-x-3 rtl:space-x-reverse pt-2">
+                <button type="button" onclick="closeMsgDeleteAllModal()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-slate-300">إلغاء / Cancel</button>
+                <button type="button" onclick="confirmMsgDeleteAll()" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-semibold text-white">نعم، احذف الكل / Yes, delete all</button>
             </div>
         </div>
     </div>
@@ -3393,24 +3652,124 @@
             });
         }
 
+        /* ---------- Certificate: themes + bilingual engine ---------- */
+        const CERT_THEMES = [
+            { id: 'gold',   ar: 'الذهبي',          en: 'Gold',         sw: '#fcd34d', sw2: '#f59e0b' },
+            { id: 'pink',   ar: 'البمبي',          en: 'Pink',         sw: '#f9a8d4', sw2: '#ec4899' },
+            { id: 'green',  ar: 'الأخضر',          en: 'Green',        sw: '#6ee7b7', sw2: '#10b981' },
+            { id: 'blue',   ar: 'الأزرق',          en: 'Blue',         sw: '#93c5fd', sw2: '#3b82f6' },
+            { id: 'purple', ar: 'البنفسجي الملكي', en: 'Royal Purple', sw: '#c4b5fd', sw2: '#8b5cf6' },
+            { id: 'slate',  ar: 'الرمادي الأردوازي', en: 'Slate',      sw: '#e2e8f0', sw2: '#94a3b8' },
+            { id: 'teal',   ar: 'الفيروزي',        en: 'Teal',         sw: '#99f6e4', sw2: '#14b8a6' }
+        ];
+        const CERT_LANGS = [
+            { id: 'ar',   ar: 'عربي',          en: 'Arabic' },
+            { id: 'en',   ar: 'English',       en: 'English' },
+            { id: 'both', ar: 'عربي + English', en: 'Arabic + English' }
+        ];
+        const CERT_PREFS_KEY = 'zakker_cert_prefs';
+        let certPrefs = { theme: 'gold', lang: null };
+
+        function loadCertPrefs() {
+            let stored = null;
+            try { const raw = localStorage.getItem(CERT_PREFS_KEY); stored = raw ? JSON.parse(raw) : null; } catch (e) { stored = null; }
+            const themeOk = stored && CERT_THEMES.some(t => t.id === stored.theme);
+            const langOk = stored && CERT_LANGS.some(l => l.id === stored.lang);
+            certPrefs = {
+                theme: themeOk ? stored.theme : 'gold',
+                lang: langOk ? stored.lang : (currentLang === 'en' ? 'en' : 'ar')
+            };
+        }
+
+        function saveCertPrefs() {
+            try { localStorage.setItem(CERT_PREFS_KEY, JSON.stringify(certPrefs)); } catch (e) { /* storage unavailable: keep in memory only */ }
+        }
+
+        function setCertTheme(id) {
+            if (!CERT_THEMES.some(t => t.id === id)) return;
+            certPrefs.theme = id; saveCertPrefs(); applyCertView();
+        }
+
+        function setCertLang(id) {
+            if (!CERT_LANGS.some(l => l.id === id)) return;
+            certPrefs.lang = id; saveCertPrefs(); applyCertView();
+        }
+
+        function renderCertControls() {
+            const isAr = currentLang !== 'en';
+            const themeBar = document.getElementById('certThemeBar');
+            const langBar = document.getElementById('certLangBar');
+            if (themeBar) {
+                themeBar.innerHTML = CERT_THEMES.map(t => `
+                    <button type="button" role="radio" aria-checked="${t.id === certPrefs.theme}" onclick="setCertTheme('${t.id}')" title="${t.ar} / ${t.en}" class="cert-swatch${t.id === certPrefs.theme ? ' is-active' : ''}" style="--sw:${t.sw};--sw2:${t.sw2}">
+                        <span class="cert-dot"></span><span>${isAr ? t.ar : t.en}</span>
+                    </button>`).join('');
+            }
+            if (langBar) {
+                langBar.innerHTML = CERT_LANGS.map(l => `
+                    <button type="button" role="radio" aria-checked="${l.id === certPrefs.lang}" onclick="setCertLang('${l.id}')" class="cert-langbtn${l.id === certPrefs.lang ? ' is-active' : ''}">${isAr ? l.ar : l.en}</button>`).join('');
+            }
+        }
+
+        function applyCertView() {
+            const area = document.getElementById('certificatePrintableArea');
+            if (!area) return;
+            area.setAttribute('data-cert-theme', certPrefs.theme);
+            area.setAttribute('data-cert-lang', certPrefs.lang);
+            area.setAttribute('dir', certPrefs.lang === 'en' ? 'ltr' : 'rtl');
+            renderCertControls();
+        }
+
+        function certGradeFor(pct) {
+            if (!Number.isFinite(pct)) return { ar: '—', en: '—' };
+            if (pct >= 90) return { ar: 'ممتاز', en: 'Excellent' };
+            if (pct >= 80) return { ar: 'جيد جدًا', en: 'Very Good' };
+            if (pct >= 65) return { ar: 'جيد', en: 'Good' };
+            if (pct >= 50) return { ar: 'مقبول', en: 'Pass' };
+            return { ar: 'مشاركة', en: 'Participation' };
+        }
+
         function openStudentCertificate(resultIndex) {
-            if (!currentUser || !currentUser.results || !currentUser.results[resultIndex]) return;
-            const res = currentUser.results[resultIndex];
+            try {
+                if (!currentUser || !currentUser.results || !currentUser.results[resultIndex]) return;
+                const res = currentUser.results[resultIndex] || {};
+                const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
 
-            document.getElementById('certStudentName').textContent = currentUser.username;
-            document.getElementById('certLessonTitle').textContent = res.lessonTitle;
-            document.getElementById('certScoreValue').textContent = `${res.score} / ${res.total}`;
-            document.getElementById('certPercentValue').textContent = `${res.percentage}%`;
-            document.getElementById('certDateValue').textContent = res.dateTime;
-            document.getElementById('certSerialNumber').textContent = `ID: ZKR-${202600 + resultIndex + 1}-${currentUser.username.toUpperCase()}`;
+                const score = Number(res.score), total = Number(res.total);
+                let pct = Number(res.percentage);
+                if (res.percentage == null || !Number.isFinite(pct)) {
+                    pct = (Number.isFinite(score) && Number.isFinite(total) && total > 0) ? Math.round((score / total) * 100) : NaN;
+                }
+                const grade = certGradeFor(pct);
+                const username = String(currentUser.username == null ? '' : currentUser.username);
 
-            document.getElementById('studentCertificateModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+                setText('certStudentName', username || '—');
+                setText('certLessonTitle', res.lessonTitle || '—');
+                setText('certScoreValue', (res.score != null && res.total != null) ? `${res.score} / ${res.total}` : '—');
+                setText('certPercentValue', Number.isFinite(pct) ? `${pct}%` : '—');
+                setText('certGradeAr', grade.ar);
+                setText('certGradeEn', grade.en);
+                setText('certDateValue', res.dateTime || '—');
+                setText('certSerialNumber', `ID: ZKR-${202600 + resultIndex + 1}-${username.toUpperCase()}`);
+
+                loadCertPrefs();
+                applyCertView();
+
+                const modal = document.getElementById('studentCertificateModal');
+                if (!modal) return;
+                modal.classList.remove('hidden');
+                modal.scrollTop = 0;
+                document.body.style.overflow = 'hidden';
+            } catch (err) {
+                console.error('Certificate error:', err);
+                showToast(currentLang === 'ar' ? 'تعذر عرض الشهادة.' : 'Could not display the certificate.', 'error');
+            }
         }
 
         function closeCertificateModal(event) {
             if (event && event.target !== event.currentTarget) return;
-            document.getElementById('studentCertificateModal').classList.add('hidden');
+            const modal = document.getElementById('studentCertificateModal');
+            if (modal) modal.classList.add('hidden');
             document.body.style.overflow = '';
         }
 
@@ -3447,33 +3806,80 @@
             }
         }
 
-        function renderStudentsTableData(studentsObj) {
+        let adminStudentQuery = '';
+        let lastStudentsObj = null;
+
+        function normalizeQuery(v) { return String(v == null ? '' : v).trim().toLowerCase(); }
+
+        function onStudentQueryInput(value) {
+            adminStudentQuery = String(value == null ? '' : value);
+            renderStudentsTableData(lastStudentsObj || localStudentsDb, true);
+        }
+
+        function clearStudentQuery() {
+            adminStudentQuery = '';
+            const input = document.getElementById('studentSmartQuery');
+            if (input) { input.value = ''; input.focus(); }
+            renderStudentsTableData(lastStudentsObj || localStudentsDb, true);
+        }
+
+        function updateStudentQueryUI(active, shown, total) {
+            const clearBtn = document.getElementById('studentQueryClear');
+            const info = document.getElementById('studentQueryInfo');
+            if (clearBtn) clearBtn.classList.toggle('hidden', !active);
+            if (info) {
+                info.classList.toggle('hidden', !active);
+                if (active) info.textContent = currentLang === 'ar' ? `عرض ${shown} من ${total} طالب` : `Showing ${shown} of ${total} students`;
+            }
+        }
+
+        function renderStudentsTableData(studentsObj, skipMeter) {
             const tbody = document.getElementById('adminStudentsTableBody');
-            tbody.innerHTML = '';
+            if (!tbody) return;
+            const source = (studentsObj && typeof studentsObj === 'object') ? studentsObj : {};
+            lastStudentsObj = source;
 
-            updateStorageMeter(studentsObj);
+            if (!skipMeter) updateStorageMeter(source);
 
-            const keys = Object.keys(studentsObj);
-            document.getElementById('adminTotalStudentsCount').textContent = keys.length;
+            const allKeys = Object.keys(source);
+            const countEl = document.getElementById('adminTotalStudentsCount');
+            if (countEl) countEl.textContent = allKeys.length;
 
-            if (keys.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">${currentLang === 'ar' ? 'لا توجد سجلات طلاب مسجلين.' : 'No registered students found.'}</td></tr>`;
+            const q = normalizeQuery(adminStudentQuery);
+
+            if (allKeys.length === 0) {
+                updateStudentQueryUI(false, 0, 0);
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">${currentLang === 'ar' ? 'لا توجد سجلات طلاب مسجلين.' : 'No registered students found.'}</td></tr>`;
                 return;
             }
 
+            const keys = q ? allKeys.filter(username => {
+                const st = source[username];
+                const pass = (st && typeof st === 'object') ? st.password : '';
+                return normalizeQuery(username).includes(q) || normalizeQuery(pass).includes(q);
+            }) : allKeys;
+
+            updateStudentQueryUI(Boolean(q), keys.length, allKeys.length);
+
+            if (keys.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-slate-300">
+                    <div class="flex flex-col items-center gap-3">
+                        <i class="fa-solid fa-user-slash text-2xl text-slate-400"></i>
+                        <span>${currentLang === 'ar' ? 'لا يوجد طالب يطابق بحثك.' : 'No student matches your search.'}</span>
+                        <button type="button" onclick="clearStudentQuery()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-violet-300 transition">${currentLang === 'ar' ? 'إعادة ضبط البحث' : 'Reset search'}</button>
+                    </div></td></tr>`;
+                return;
+            }
+
+            let rowsHtml = '';
             keys.forEach(username => {
-                const student = studentsObj[username];
+                const student = source[username];
                 if (!student || typeof student !== 'object') return;
-                const results = Array.isArray(student.results) ? student.results : Object.values(student.results || {});
                 const uJs = escapeHtml(JSON.stringify(username));
                 const uHtml = escapeHtml(username);
                 const isBanned = Boolean(student.banned);
 
-                const resultsSummaryText = results.length > 0
-                    ? results.map(r => `${escapeHtml(r.lessonTitle)} (${escapeHtml(r.score)}/${escapeHtml(r.total)} - ${escapeHtml(r.dateTime)})`).join(' | ')
-                    : (currentLang === 'ar' ? 'لا توجد نتائج' : 'No results');
-
-                tbody.innerHTML += `
+                rowsHtml += `
                     <tr class="hover:bg-white/5 transition ${isBanned ? 'opacity-60 bg-rose-950/20' : ''}">
                         <td class="px-4 py-4 font-bold text-white">
                             <div class="flex items-center space-x-2 rtl:space-x-reverse">
@@ -3483,7 +3889,6 @@
                         </td>
                         <td class="px-4 py-4 font-mono text-xs text-slate-300">${escapeHtml(student.password)}</td>
                         <td class="px-4 py-4 text-slate-300 font-mono text-xs">${escapeHtml(student.regDate || '2026-11-17')}</td>
-                        <td class="px-4 py-4 text-indigo-300 text-xs max-w-xs truncate" title="${resultsSummaryText}">${results.length} (${resultsSummaryText})</td>
                         <td class="px-4 py-4">
                             <input type="text" value="${escapeHtml(student.notes || '')}" onchange="updateStudentNote(${uJs}, this.value)" class="px-3 py-1.5 rounded-lg glass-input text-xs w-36" placeholder="ملاحظة...">
                         </td>
@@ -3503,6 +3908,7 @@
                     </tr>
                 `;
             });
+            tbody.innerHTML = rowsHtml;
         }
 
         function handleAddNewStudent(event) {
@@ -3773,16 +4179,59 @@ function populateAdminRecipients() {
     if ([...sel.options].some(o => o.value === prev)) sel.value = prev;
 }
 
+/* ---- per-side deletion flags: delS = deleted for sender, delR = deleted for recipient ---- */
+const msgFilter = { name: '', dir: 'all', status: 'all' };
+let pendingMsgDeleteId = null;
+function isMsgVisibleTo(m, me) { return !((m.from === me && m.delS) || (m.to === me && m.delR)); }
+function msgFilterActive() { return Boolean(msgFilter.name) || msgFilter.dir !== 'all' || msgFilter.status !== 'all'; }
+function applyMsgFilter(list, me) {
+    const q = String(msgFilter.name || '').trim().toLowerCase();
+    return list.filter(m => {
+        const incoming = m.to === me;
+        const other = incoming ? m.from : m.to;
+        if (q && !(String(other).toLowerCase().includes(q) || String(nameOf(other)).toLowerCase().includes(q))) return false;
+        if (msgFilter.dir === 'in' && !incoming) return false;
+        if (msgFilter.dir === 'out' && incoming) return false;
+        if (msgFilter.status === 'read' && !m.read) return false;
+        if (msgFilter.status === 'unread' && m.read) return false;
+        return true;
+    });
+}
+function onAdmMsgFilterChange() {
+    const n = $id('admMsgFilterName'), d = $id('admMsgFilterDir'), s = $id('admMsgFilterStatus');
+    msgFilter.name = n ? n.value.trim() : '';
+    msgFilter.dir = d ? d.value : 'all';
+    msgFilter.status = s ? s.value : 'all';
+    renderMessageTable('adm');
+}
+function resetAdmMsgFilter() {
+    const n = $id('admMsgFilterName'), d = $id('admMsgFilterDir'), s = $id('admMsgFilterStatus');
+    if (n) n.value = ''; if (d) d.value = 'all'; if (s) s.value = 'all';
+    msgFilter.name = ''; msgFilter.dir = 'all'; msgFilter.status = 'all';
+    renderMessageTable('adm');
+}
+
 function renderMessageTable(prefix) {
     const tbody = $id(prefix + 'MsgTable'); const me = viewerOf(prefix);
     if (!tbody || !me) return;
-    const mine = zkMessages.filter(m => m.from === me || m.to === me).sort((a, b) => b.ts - a.ts);
+    const isAdm = prefix === 'adm';
+    const cols = isAdm ? 6 : 5;
+    const mine = zkMessages.filter(m => (m.from === me || m.to === me) && isMsgVisibleTo(m, me)).sort((a, b) => b.ts - a.ts);
     const unread = mine.filter(m => m.to === me && !m.read).length;
     const badge = $id(prefix + 'UnreadBadge');
     if (badge) { badge.textContent = unread + ' ' + T('جديدة', 'new'); badge.classList.toggle('hidden', unread === 0); }
-    if (!mine.length) { tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-slate-400">${T('لا توجد رسائل.', 'No messages yet.')}</td></tr>`; return; }
+
+    const active = isAdm && msgFilterActive();
+    const view = active ? applyMsgFilter(mine, me) : mine;
+    if (isAdm) {
+        const info = $id('admMsgFilterInfo'), reset = $id('admMsgFilterReset');
+        if (info) info.textContent = active ? T(`عرض ${view.length} من ${mine.length} رسالة`, `Showing ${view.length} of ${mine.length} messages`) : T(`إجمالي الرسائل: ${mine.length}`, `Total messages: ${mine.length}`);
+        if (reset) reset.classList.toggle('hidden', !active);
+    }
+    if (!mine.length) { tbody.innerHTML = `<tr><td colspan="${cols}" class="px-4 py-8 text-center text-slate-400">${T('لا توجد رسائل.', 'No messages yet.')}</td></tr>`; return; }
+    if (!view.length) { tbody.innerHTML = `<tr><td colspan="${cols}" class="px-4 py-8 text-center text-slate-300">${T('لا توجد رسائل تطابق الفلاتر الحالية.', 'No messages match the current filters.')}</td></tr>`; return; }
     const loc = T('ar-EG', 'en-GB');
-    tbody.innerHTML = mine.map(m => {
+    tbody.innerHTML = view.map(m => {
         const incoming = m.to === me;
         const other = incoming ? m.from : m.to;
         const isNew = incoming && !m.read;
@@ -3790,23 +4239,95 @@ function renderMessageTable(prefix) {
             ? (m.read ? `<span class="text-emerald-400 text-xs"><i class="fa-solid fa-check-double"></i> ${T('مقروءة', 'Read')}</span>`
                       : `<button type="button" onclick="markMessageRead('${m.id}','${prefix}')" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs"><span class="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse"></span> ${T('جديدة · تحديد كمقروءة', 'New · mark read')}</button>`)
             : (m.read ? `<span class="text-emerald-400 text-xs">${T('قرأها المستلم', 'Seen')}</span>` : `<span class="text-amber-300 text-xs">${T('لم تُقرأ بعد', 'Unread')}</span>`);
+        const actionCell = isAdm
+            ? `<td class="px-3 py-3"><button type="button" onclick="openMsgDeleteModal('${m.id}')" class="px-2.5 py-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 transition text-xs whitespace-nowrap" title="${T('حذف', 'Delete')}"><i class="fa-solid fa-trash"></i> ${T('حذف', 'Delete')}</button></td>`
+            : '';
         return `<tr class="${isNew ? 'msg-unread' : 'msg-read'}">
             <td class="px-3 py-3 text-xs">${incoming ? `<i class="fa-solid fa-arrow-down text-sky-400"></i> ${T('وارد', 'In')}` : `<i class="fa-solid fa-arrow-up text-violet-400"></i> ${T('صادر', 'Out')}`}</td>
             <td class="px-3 py-3 text-xs text-white">${escapeHtml(nameOf(other))}</td>
             <td class="px-3 py-3 max-w-xs"><div class="text-white text-sm truncate">${escapeHtml(m.subject)}</div><div class="text-xs text-slate-300 truncate" title="${escapeHtml(m.body)}">${escapeHtml(m.body)}</div></td>
             <td class="px-3 py-3 text-xs font-mono text-slate-300 whitespace-nowrap">${escapeHtml(new Date(m.ts).toLocaleString(loc))}</td>
-            <td class="px-3 py-3">${status}</td></tr>`;
+            <td class="px-3 py-3">${status}</td>${actionCell}</tr>`;
     }).join('');
 }
+
+/* ---- per-message delete (scope: sender / recipient / both) ---- */
+function openMsgDeleteModal(id) {
+    try {
+        const m = zkMessages.find(x => x.id === id);
+        if (!m) { safeToast('الرسالة غير موجودة.', 'Message not found.', 'error'); return; }
+        pendingMsgDeleteId = id;
+        const prev = $id('msgDeletePreview');
+        if (prev) prev.innerHTML = `<div class="font-bold text-white">${escapeHtml(m.subject)}</div><div class="mt-1">${escapeHtml(String(m.body).slice(0, 160))}${String(m.body).length > 160 ? '…' : ''}</div><div class="mt-2 text-[11px] text-slate-400">${escapeHtml(nameOf(m.from))} → ${escapeHtml(nameOf(m.to))}</div>`;
+        const ls = $id('msgDelLblSender'), lr = $id('msgDelLblRecipient');
+        if (ls) ls.textContent = T(`حذف للطرف الأول / المرسل فقط (${nameOf(m.from)})`, `Delete for sender / first party only (${nameOf(m.from)})`);
+        if (lr) lr.textContent = T(`حذف للطرف الثاني / المستقبل فقط (${nameOf(m.to)})`, `Delete for recipient / other party only (${nameOf(m.to)})`);
+        const bs = $id('msgDelBtnSender'), br = $id('msgDelBtnRecipient');
+        if (bs) bs.disabled = Boolean(m.delS);
+        if (br) br.disabled = Boolean(m.delR);
+        $id('msgDeleteModal').classList.remove('hidden');
+    } catch (e) { console.error(e); safeToast('تعذر فتح نافذة الحذف.', 'Could not open the delete dialog.', 'error'); }
+}
+function closeMsgDeleteModal() { const el = $id('msgDeleteModal'); if (el) el.classList.add('hidden'); pendingMsgDeleteId = null; }
+function confirmMsgDelete(scope) {
+    try {
+        const m = zkMessages.find(x => x.id === pendingMsgDeleteId);
+        if (!m) { closeMsgDeleteModal(); renderAllMessages(); return; }
+        const cloud = isFirebaseActive && db;
+        if (scope === 'sender') m.delS = true;
+        else if (scope === 'recipient') m.delR = true;
+        else if (scope === 'both') { m.delS = true; m.delR = true; }
+        else return;
+        if (m.delS && m.delR) {
+            zkMessages = zkMessages.filter(x => x.id !== m.id);
+            if (cloud) db.ref('messages/' + m.id).remove().catch(err => console.warn(err));
+        } else if (cloud) {
+            const patch = {}; if (m.delS) patch.delS = true; if (m.delR) patch.delR = true;
+            db.ref('messages/' + m.id).update(patch).catch(err => console.warn(err));
+        }
+        saveMessages();
+        safeToast('تم حذف الرسالة.', 'Message deleted.');
+    } catch (e) { console.error(e); safeToast('تعذر حذف الرسالة.', 'Could not delete the message.', 'error'); }
+    closeMsgDeleteModal();
+    renderAllMessages();
+}
+
+/* ---- delete ALL messages ---- */
+function openMsgDeleteAllModal() {
+    if (!zkMessages.length) { safeToast('لا توجد رسائل للحذف.', 'There are no messages to delete.', 'error'); return; }
+    $id('msgDeleteAllMessage').textContent = T(`سيتم حذف ${zkMessages.length} رسالة نهائياً من جميع الأطراف. لا يمكن التراجع.`, `${zkMessages.length} message(s) will be permanently deleted for all parties. This cannot be undone.`);
+    $id('msgDeleteAllModal').classList.remove('hidden');
+}
+function closeMsgDeleteAllModal() { const el = $id('msgDeleteAllModal'); if (el) el.classList.add('hidden'); }
+function confirmMsgDeleteAll() {
+    try {
+        zkMessages = [];
+        saveMessages();
+        if (isFirebaseActive && db) db.ref('messages').remove().catch(err => console.warn(err));
+        safeToast('تم حذف جميع الرسائل.', 'All messages deleted.');
+    } catch (e) { console.error(e); safeToast('تعذر حذف الرسائل.', 'Could not delete messages.', 'error'); }
+    closeMsgDeleteAllModal();
+    renderAllMessages();
+}
+document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const m1 = $id('msgDeleteModal'), m2 = $id('msgDeleteAllModal');
+    if (m1 && !m1.classList.contains('hidden')) closeMsgDeleteModal();
+    if (m2 && !m2.classList.contains('hidden')) closeMsgDeleteAllModal();
+});
+
 function renderAllMessages() {
     try { populateAdminRecipients(); renderMessageTable('adm'); renderMessageTable('stu'); } catch (e) { console.warn('Messages render', e); }
 }
 loadMessages();
 try {
     if (isFirebaseActive && db) {
+        let zkMsgSynced = false;
         db.ref('messages').on('value', snap => {
             const v = snap.val();
             if (v && typeof v === 'object') { zkMessages = Object.values(v).filter(isValidMsg); saveMessages(); renderAllMessages(); }
+            else if (zkMsgSynced) { zkMessages = []; saveMessages(); renderAllMessages(); } /* node removed remotely (e.g. delete all) */
+            zkMsgSynced = true;
         }, err => console.warn(err));
     }
 } catch (e) { console.warn(e); }
@@ -4076,6 +4597,475 @@ function renderLessonContent() {
         safeToast('تعذر عرض الدرس بالكامل.', 'Could not fully render the lesson.', 'error');
     }
 }
+
+</script>
+<script>
+(function () {
+'use strict';
+/* ==========================================================
+   ZAKKER — CUSTOM LESSONS MODULE (تخصيص الدروس / عرض الدروس)
+   Additive layer: wraps existing globals, never edits their logic.
+   Storage: Firebase  customLessons/{lessonId}  +  localStorage mirror.
+   ========================================================== */
+var LS_KEY = 'zakker_custom_lessons', MAX_BYTES = 2 * 1024 * 1024;
+var lessons = {}, selectedId = null, anchor = null, pending = null, importFileTitle = '', tg = null, lastSig = '';
+var ACTIVE = 'px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white transition shadow';
+var INACTIVE = 'px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition';
+
+var $ = function (id) { return document.getElementById(id); };
+var t = function (ar, en) { return (typeof currentLang !== 'undefined' && currentLang === 'en') ? en : ar; };
+var esc = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
+/* values already passed through deepClean(): only neutralise leftover quotes/brackets, keep entities */
+var safe = function (v) { return String(v == null ? '' : v).replace(/[<>"']/g, function (c) { return ({ '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
+var toast = function (ar, en, type) { try { showToast(t(ar, en), type || 'success'); } catch (e) { console.warn(ar); } };
+var cloudBad = false;
+var cloudOn = function () { return !cloudBad && typeof isFirebaseActive !== 'undefined' && isFirebaseActive && typeof db !== 'undefined' && !!db; };
+var fmtDate = function (iso) { try { var d = new Date(iso); if (isNaN(d)) return ''; return d.toLocaleDateString(t('ar-EG', 'en-GB'), { year: 'numeric', month: 'short', day: 'numeric' }); } catch (e) { return ''; } };
+var genId = function () { return 'L' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); };
+
+/* ---------------- JSON normalisation (flexible keys) ---------------- */
+var ALIASES = {
+    title: ['title', 'lessonTitle', 'name', 'عنوان الدرس', 'العنوان', 'عنوان'],
+    description: ['description', 'summary', 'desc', 'الوصف', 'ملخص', 'الملخص'],
+    images: ['images', 'صور', 'الصور'],
+    audios: ['audios', 'audioCards', 'بطاقات صوتية', 'البطاقات الصوتية'],
+    interactiveCards: ['interactiveCards', 'cards', 'بطاقات', 'البطاقات'],
+    videos: ['videos', 'فيديوهات', 'الفيديوهات'],
+    questions: ['questions', 'quiz', 'mcq', 'أسئلة', 'الأسئلة'],
+    games: ['games', 'ألعاب', 'الألعاب'],
+    layout: ['layout'],
+    content: ['content', 'contents', 'body', 'sections', 'slides', 'المحتوى', 'محتوى الدرس', 'الشرائح', 'الأقسام']
+};
+function pick(o, keys) {
+    for (var i = 0; i < keys.length; i++) {
+        if (Object.prototype.hasOwnProperty.call(o, keys[i]) && o[keys[i]] != null && o[keys[i]] !== '') return o[keys[i]];
+    }
+    return undefined;
+}
+function hasText(v, d) {
+    d = d || 0; if (d > 6 || v == null) return false;
+    if (typeof v === 'string') return v.trim().length > 0;
+    if (typeof v === 'number' || typeof v === 'boolean') return true;
+    if (Array.isArray(v)) return v.some(function (x) { return hasText(x, d + 1); });
+    if (typeof v === 'object') return Object.keys(v).some(function (k) { return hasText(v[k], d + 1); });
+    return false;
+}
+function firstString(v, d) {
+    d = d || 0; if (d > 6 || v == null) return '';
+    if (typeof v === 'string') return v.trim();
+    if (Array.isArray(v)) { for (var i = 0; i < v.length; i++) { var s = firstString(v[i], d + 1); if (s) return s; } return ''; }
+    if (typeof v === 'object') { var ks = Object.keys(v); for (var j = 0; j < ks.length; j++) { var r = firstString(v[ks[j]], d + 1); if (r) return r; } }
+    return '';
+}
+function fail(code) { var e = new Error(code); e.zk = code; return e; }
+
+function parseLessonJSON(text, fallbackTitle) {
+    if (typeof text !== 'string' || !text.trim()) throw fail('empty');
+    if (new Blob([text]).size > MAX_BYTES) throw fail('size');
+    var raw;
+    try { raw = JSON.parse(text.replace(/^\uFEFF/, '')); } catch (e) { throw fail('syntax'); }
+    if (Array.isArray(raw)) raw = { content: raw };
+    if (!raw || typeof raw !== 'object') throw fail('shape');
+    var wrap = pick(raw, ['lesson', 'data', 'الدرس']);
+    if (wrap && typeof wrap === 'object' && !Array.isArray(wrap) && !pick(raw, ALIASES.title)) raw = wrap;
+    if (!Object.keys(raw).length) throw fail('empty');
+
+    var base = {};
+    ['title', 'description', 'images', 'audios', 'interactiveCards', 'videos', 'questions', 'games', 'layout'].forEach(function (k) {
+        var v = pick(raw, ALIASES[k]); if (v !== undefined) base[k] = v;
+    });
+    var title = String(base.title == null ? (fallbackTitle || '') : base.title).trim();
+    if (!title) throw fail('title');
+    base.title = title.slice(0, 200);
+    if (Array.isArray(base.questions)) {
+        base.questions = base.questions.map(function (q) {
+            if (q && typeof q === 'object' && typeof q.q !== 'string') { var s = q.question || q.text || q['السؤال']; if (typeof s === 'string') return Object.assign({}, q, { q: s }); }
+            return q;
+        });
+    }
+    var content = pick(raw, ALIASES.content);
+    var lesson = normalizeLesson(deepClean(base));
+    if (content !== undefined && hasText(content)) lesson.content = deepClean(content);
+    if (!hasAnyLessonContent(lesson) && !hasText(lesson.content)) throw fail('nocontent');
+    var summary = (lesson.description || firstString(lesson.content) || '').replace(/\s+/g, ' ').slice(0, 220);
+    return { title: lesson.title, summary: summary, lesson: lesson };
+}
+
+/* ---------------- wire format / storage ---------------- */
+function toWire(r) {
+    return { id: r.id, title: r.title, summary: r.summary, createdAt: r.createdAt, visible: !!r.visible, audience: r.audience, students: r.students.slice(), lessonJson: JSON.stringify(r.lesson) };
+}
+function fromWire(key, w) {
+    try {
+        if (!w || typeof w !== 'object') return null;
+        var id = String(w.id || key); if (!/^[A-Za-z0-9_-]{3,60}$/.test(id)) return null;
+        if (typeof w.lessonJson !== 'string' || w.lessonJson.length > MAX_BYTES * 2) return null;
+        var lesson = JSON.parse(w.lessonJson);
+        if (!lesson || typeof lesson !== 'object' || Array.isArray(lesson)) return null;
+        lesson = normalizeLesson(deepClean(lesson));
+        if (lesson.content !== undefined) lesson.content = deepClean(lesson.content);
+        var st = Array.isArray(w.students) ? w.students : (w.students && typeof w.students === 'object' ? Object.keys(w.students).map(function (k) { return w.students[k]; }) : []);
+        return {
+            id: id, title: String(lesson.title || deepClean(String(w.title || ''))).slice(0, 200),
+            summary: deepClean(String(w.summary || lesson.description || '')).slice(0, 300),
+            createdAt: String(w.createdAt || ''), visible: w.visible === true,
+            audience: ['none', 'student', 'group', 'all'].indexOf(w.audience) >= 0 ? w.audience : 'none',
+            students: st.filter(function (s) { return typeof s === 'string' && s; }).slice(0, 5000), lesson: lesson
+        };
+    } catch (e) { console.warn('Skipped malformed lesson', e); return null; }
+}
+function cleanAll(obj) {
+    var out = {}; if (!obj || typeof obj !== 'object') return out;
+    Object.keys(obj).forEach(function (k) { var r = fromWire(k, obj[k]); if (r) out[r.id] = r; });
+    return out;
+}
+function loadLocal() { try { var s = localStorage.getItem(LS_KEY); var o = s ? JSON.parse(s) : {}; return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {}; } catch (e) { return {}; } }
+function saveLocal() {
+    try {
+        var o = {}; Object.keys(lessons).forEach(function (k) { o[k] = toWire(lessons[k]); });
+        var s = JSON.stringify(o); localStorage.setItem(LS_KEY, s); lastSig = s; return true;
+    } catch (e) { toast('تعذر الحفظ المحلي (التخزين ممتلئ).', 'Local save failed (storage full).', 'error'); return false; }
+}
+function cloudWarn(e, rec) {
+    console.warn('Custom lessons cloud error:', e && e.message);
+    if (e && /permission|denied/i.test(String(e.code || e.message))) cloudBad = true;
+    if (rec && lessons[rec.id] === undefined && !rec.deleted) { lessons[rec.id] = rec; saveLocal(); renderAll(); }
+    toast('تعذر التزامن السحابي؛ التغيير محفوظ محليًا فقط. تحقق من قواعد Firebase للمسار customLessons.', 'Cloud sync failed; change kept locally only. Check Firebase rules for customLessons.', 'error');
+}
+function sorted() { return Object.keys(lessons).map(function (k) { return lessons[k]; }).sort(function (a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); }); }
+function available(r, user) {
+    if (!r || !r.visible || !user) return false;
+    if (r.audience === 'all') return true;
+    if (r.audience === 'student') return r.students[0] === user;
+    if (r.audience === 'group') return r.students.indexOf(user) >= 0;
+    return false;
+}
+function studentNames() { try { return Object.keys(localStudentsDb || {}).sort(); } catch (e) { return []; } }
+
+function renderAll() { try { renderAdmin(); } catch (e) { console.warn(e); } try { renderStudent(); } catch (e) { console.warn(e); } }
+
+/* ================= ADMIN: tab ================= */
+window.zkAdminTab = function (name) {
+    var g = $('zkAdmTabGeneral'), l = $('zkAdmTabLessons'), bg = $('zkAdmTabBtnGeneral'), bl = $('zkAdmTabBtnLessons');
+    if (!g || !l) return;
+    var isL = name === 'lessons';
+    g.classList.toggle('hidden', isL); l.classList.toggle('hidden', !isL);
+    bg.className = isL ? INACTIVE : ACTIVE.replace('bg-indigo-600', 'bg-violet-600');
+    bl.className = isL ? ACTIVE.replace('bg-indigo-600', 'bg-violet-600') : INACTIVE;
+    if (isL) renderAdmin();
+};
+
+function audienceLabel(r) {
+    if (!r.visible) return t('مخفي عن الطلاب', 'Hidden from students');
+    if (r.audience === 'all') return t('جميع الطلاب (' + studentNames().length + ')', 'All students (' + studentNames().length + ')');
+    if (r.audience === 'student') return r.students[0] ? t('طالب محدد: ', 'Student: ') + esc(r.students[0]) : t('ظاهر بدون مستهدفين', 'Visible, no target');
+    if (r.audience === 'group') return r.students.length ? t('مجموعة (' + r.students.length + ' طالب)', 'Group (' + r.students.length + ' students)') : t('ظاهر بدون مستهدفين', 'Visible, no target');
+    return t('ظاهر بدون مستهدفين', 'Visible, no target');
+}
+function counts(r) {
+    var l = r.lesson, g = l.games || {}, p = [];
+    if (l.images && l.images.length) p.push(l.images.length + ' ' + t('صور', 'images'));
+    if (l.audios && l.audios.length) p.push(l.audios.length + ' ' + t('صوتية', 'audio'));
+    if (l.interactiveCards && l.interactiveCards.length) p.push(l.interactiveCards.length + ' ' + t('بطاقات', 'cards'));
+    if (l.videos && l.videos.length) p.push(l.videos.length + ' ' + t('فيديو', 'videos'));
+    if (g.wheel || g.arcade || g.matching) p.push(t('ألعاب', 'games'));
+    if (l.questions && l.questions.length) p.push(l.questions.length + ' ' + t('أسئلة', 'questions'));
+    if (hasText(l.content)) p.push(t('نص', 'text'));
+    return p.join(' • ');
+}
+var CLAMP = 'display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;';
+function renderAdmin() {
+    var grid = $('zkAdmCards'); if (!grid) return;
+    var list = sorted();
+    $('zkAdmCount').textContent = String(list.length);
+    $('zkAdmEmpty').classList.toggle('hidden', list.length > 0);
+    grid.innerHTML = list.map(function (r) {
+        var badge = r.visible ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-slate-500/20 text-slate-300 border-slate-500/30';
+        return '<div class="glass-card p-5 rounded-3xl border border-white/10 flex flex-col justify-between gap-4">' +
+            '<div class="space-y-2"><div class="flex items-start justify-between gap-2"><h4 class="text-base font-bold text-white break-words">' + safe(r.title) + '</h4>' +
+            '<i class="fa-solid ' + (r.visible ? 'fa-eye text-emerald-400' : 'fa-eye-slash text-slate-400') + ' mt-1"></i></div>' +
+            '<p class="text-xs text-slate-300" style="' + CLAMP + '">' + (safe(r.summary) || '—') + '</p>' +
+            '<div class="text-[11px] text-slate-400"><i class="fa-regular fa-calendar"></i> ' + esc(fmtDate(r.createdAt)) + '</div>' +
+            '<div class="text-[11px] text-slate-400">' + esc(counts(r)) + '</div>' +
+            '<span class="inline-block text-[11px] px-2.5 py-1 rounded-full border ' + badge + '">' + audienceLabel(r) + '</span></div>' +
+            '<div class="flex flex-wrap gap-2">' +
+            '<button type="button" data-zk-act="target" data-id="' + esc(r.id) + '" class="flex-1 min-w-[8rem] px-3 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-200 border border-indigo-500/30 text-xs font-medium transition"><i class="fa-solid fa-users-gear"></i> ' + t('إظهار / إخفاء وتحديد المستهدفين', 'Show / Hide & target') + '</button>' +
+            '<button type="button" data-zk-act="delete" data-id="' + esc(r.id) + '" class="px-3 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 text-xs font-medium transition"><i class="fa-solid fa-trash"></i> ' + t('حذف الدرس', 'Delete') + '</button></div></div>';
+    }).join('');
+}
+
+/* ================= ADMIN: import modal ================= */
+window.zkOpenImport = function () {
+    $('zkImpText').value = ''; $('zkImpFile').value = ''; importFileTitle = ''; pending = null;
+    $('zkImpStatus').innerHTML = ''; $('zkImpPreview').classList.add('hidden'); $('zkImpSave').disabled = true;
+    $('zkImportModal').classList.remove('hidden');
+};
+window.zkCloseImport = function () { $('zkImportModal').classList.add('hidden'); pending = null; };
+window.zkImportFile = function (ev) {
+    try {
+        var f = ev.target.files && ev.target.files[0]; if (!f) return;
+        if (!/\.json$/i.test(f.name) && f.type !== 'application/json') { setImpError(t('الرجاء اختيار ملف بصيغة .json فقط.', 'Please choose a .json file only.')); return; }
+        if (f.size > MAX_BYTES) { setImpError(t('حجم الملف كبير جدًا (الحد 2MB).', 'File too large (limit 2MB).')); return; }
+        importFileTitle = f.name.replace(/\.json$/i, '');
+        var rd = new FileReader();
+        rd.onload = function (e) { $('zkImpText').value = String(e.target.result || ''); window.zkValidateImport(); };
+        rd.onerror = function () { setImpError(t('تعذر قراءة الملف.', 'Could not read the file.')); };
+        rd.readAsText(f);
+    } catch (e) { console.warn(e); setImpError(t('تعذر قراءة الملف.', 'Could not read the file.')); }
+};
+function setImpError(msg) {
+    pending = null; $('zkImpSave').disabled = true; $('zkImpPreview').classList.add('hidden');
+    $('zkImpStatus').innerHTML = '<div class="p-3 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-200 text-xs"><i class="fa-solid fa-circle-exclamation"></i> ' + esc(msg) + '</div>';
+}
+window.zkValidateImport = function () {
+    var txt = $('zkImpText').value;
+    pending = null; $('zkImpSave').disabled = true;
+    if (!txt.trim()) { $('zkImpStatus').innerHTML = ''; $('zkImpPreview').classList.add('hidden'); return; }
+    try {
+        pending = parseLessonJSON(txt, importFileTitle);
+        $('zkImpStatus').innerHTML = '<div class="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-200 text-xs"><i class="fa-solid fa-circle-check"></i> ' + t('الملف صالح وجاهز للحفظ.', 'File is valid and ready to save.') + '</div>';
+        $('zkImpPrevTitle').innerHTML = safe(pending.title);
+        $('zkImpPrevSummary').innerHTML = safe(pending.summary) || '—';
+        $('zkImpPrevCounts').textContent = counts({ lesson: pending.lesson });
+        $('zkImpPreview').classList.remove('hidden');
+        $('zkImpSave').disabled = false;
+    } catch (e) {
+        var m = {
+            empty: t('الملف فارغ.', 'The JSON is empty.'),
+            size: t('حجم المحتوى كبير جدًا (الحد 2MB).', 'Content too large (limit 2MB).'),
+            syntax: t('صيغة JSON غير صالحة أو تالفة. تأكد من الأقواس والفواصل.', 'Invalid or corrupted JSON. Check brackets and commas.'),
+            shape: t('بنية الملف غير مدعومة: يجب أن يكون كائنًا يمثل الدرس.', 'Unsupported structure: the file must be a lesson object.'),
+            title: t('عنوان الدرس مفقود (title أو "عنوان الدرس").', 'Lesson title is missing (title or "عنوان الدرس").'),
+            nocontent: t('لا يحتوي الدرس على محتوى صالح للعرض.', 'The lesson has no displayable content.')
+        };
+        if (!e.zk) console.warn(e);
+        setImpError(m[e.zk] || t('تعذر تحليل الملف.', 'Could not parse the file.'));
+    }
+};
+window.zkSaveImport = function () {
+    if (!pending) window.zkValidateImport();
+    if (!pending) return;
+    try {
+        var vis = $('zkImpDefault').value === 'all';
+        var rec = { id: genId(), title: pending.title, summary: pending.summary, createdAt: new Date().toISOString(), visible: vis, audience: vis ? 'all' : 'none', students: [], lesson: pending.lesson };
+        lessons[rec.id] = rec;
+        if (!saveLocal()) { delete lessons[rec.id]; return; }
+        if (cloudOn()) { try { db.ref('customLessons/' + rec.id).set(toWire(rec)).catch(function (er) { cloudWarn(er, rec); }); } catch (e) { cloudWarn(e, rec); } }
+        window.zkCloseImport(); renderAll();
+        toast('تم حفظ الدرس بنجاح!', 'Lesson saved successfully!');
+    } catch (e) { console.error(e); toast('تعذر حفظ الدرس.', 'Could not save the lesson.', 'error'); }
+};
+
+/* ================= ADMIN: delete / targeting ================= */
+function deleteLesson(id) {
+    var r = lessons[id]; if (!r) return;
+    if (!window.confirm(t('هل تريد حذف الدرس نهائيًا؟\n' + r.title, 'Delete this lesson permanently?\n' + r.title))) return;
+    delete lessons[id]; saveLocal();
+    if (cloudOn()) { try { db.ref('customLessons/' + id).remove().catch(function (er) { cloudWarn(er); }); } catch (e) { cloudWarn(e); } }
+    renderAll(); toast('تم حذف الدرس.', 'Lesson deleted.');
+}
+function openTarget(id) {
+    var r = lessons[id]; if (!r) return;
+    tg = { id: id, visible: r.visible, audience: r.audience === 'none' ? 'all' : r.audience, students: {} };
+    r.students.forEach(function (s) { tg.students[s] = true; });
+    $('zkTgTitle').innerHTML = safe(r.title);
+    $('zkTgVisible').checked = tg.visible;
+    Array.prototype.forEach.call(document.getElementsByName('zkTgAud'), function (x) { x.checked = x.value === tg.audience; });
+    renderTgLists(studentNames());
+    $('zkTargetModal').classList.remove('hidden');
+    if (cloudOn()) {
+        withTimeout(db.ref('students').once('value')).then(function (snap) {
+            var v = snap.val(); if (v && typeof v === 'object' && tg) renderTgLists(Object.keys(v).sort());
+        }).catch(function () { /* keep local list */ });
+    }
+}
+function renderTgLists(names) {
+    var single = $('zkTgSingle'), group = $('zkTgGroup'); if (!single || !group || !tg) return;
+    var selOne = Object.keys(tg.students)[0] || '';
+    single.innerHTML = '<option value="">' + t('— اختر طالبًا —', '— Select a student —') + '</option>' + names.map(function (n) { return '<option value="' + esc(n) + '"' + (n === selOne ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('');
+    group.innerHTML = names.length ? names.map(function (n) {
+        return '<label class="flex items-center gap-2 p-2 rounded-lg bg-white/5 text-sm text-slate-200 cursor-pointer"><input type="checkbox" class="accent-indigo-500" data-zk-stu="' + esc(n) + '"' + (tg.students[n] ? ' checked' : '') + '><span class="break-all">' + esc(n) + '</span></label>';
+    }).join('') : '<div class="text-xs text-slate-400">' + t('لا يوجد طلاب مسجلون.', 'No registered students.') + '</div>';
+    syncTgPanels();
+}
+function syncTgPanels() {
+    var a = 'all'; Array.prototype.forEach.call(document.getElementsByName('zkTgAud'), function (x) { if (x.checked) a = x.value; });
+    $('zkTgSinglePanel').classList.toggle('hidden', a !== 'student');
+    $('zkTgGroupPanel').classList.toggle('hidden', a !== 'group');
+}
+window.zkCloseTarget = function () { $('zkTargetModal').classList.add('hidden'); tg = null; };
+window.zkSaveTarget = function () {
+    if (!tg) return;
+    var r = lessons[tg.id]; if (!r) { window.zkCloseTarget(); return; }
+    var vis = $('zkTgVisible').checked, aud = 'all', stu = [];
+    Array.prototype.forEach.call(document.getElementsByName('zkTgAud'), function (x) { if (x.checked) aud = x.value; });
+    if (aud === 'student') { var v = $('zkTgSingle').value; if (v) stu = [v]; }
+    else if (aud === 'group') { Array.prototype.forEach.call($('zkTgGroup').querySelectorAll('input[data-zk-stu]:checked'), function (c) { stu.push(c.getAttribute('data-zk-stu')); }); }
+    if (vis && aud !== 'all' && !stu.length) { toast('اختر طالبًا واحدًا على الأقل لتحديد المستهدفين.', 'Select at least one student.', 'error'); return; }
+    r.visible = vis; r.audience = aud; r.students = stu;
+    if (!saveLocal()) return;
+    if (cloudOn()) { try { db.ref('customLessons/' + r.id).update({ visible: vis, audience: aud, students: stu.length ? stu : null }).catch(function (er) { cloudWarn(er); }); } catch (e) { cloudWarn(e); } }
+    window.zkCloseTarget(); renderAll(); toast('تم حفظ التخصيص.', 'Targeting saved.');
+};
+
+/* ================= STUDENT: tab + viewer ================= */
+function myLessons() { return currentUser ? sorted().filter(function (r) { return available(r, currentUser.username); }) : []; }
+function gen(v, d) {
+    d = d || 0; if (d > 5 || v == null) return '';
+    if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
+        return String(v).split(/\n{2,}/).map(function (p) { return '<p class="text-sm text-slate-200 leading-7">' + safe(p).replace(/\n/g, '<br>') + '</p>'; }).join('');
+    }
+    if (Array.isArray(v)) {
+        if (v.every(function (x) { return typeof x === 'string' || typeof x === 'number'; }))
+            return '<ul class="list-disc ps-6 space-y-1 text-sm text-slate-200">' + v.map(function (x) { return '<li>' + safe(x) + '</li>'; }).join('') + '</ul>';
+        return '<div class="space-y-3">' + v.map(function (x) { return '<div class="rounded-2xl bg-white/5 border border-white/10 p-4 space-y-2">' + gen(x, d + 1) + '</div>'; }).join('') + '</div>';
+    }
+    if (typeof v === 'object') {
+        var tk = ['title', 'heading', 'عنوان', 'العنوان'].filter(function (k) { return typeof v[k] === 'string' && v[k]; })[0];
+        var h = tk ? '<h4 class="text-base font-bold text-white">' + safe(v[tk]) + '</h4>' : '';
+        var textKeys = ['text', 'body', 'content', 'description', 'desc', 'نص', 'المحتوى', 'الشرح'];
+        Object.keys(v).forEach(function (k) {
+            if (k === tk || v[k] == null || v[k] === '') return;
+            var plain = typeof v[k] === 'string' || typeof v[k] === 'number';
+            h += (plain && textKeys.indexOf(k) >= 0) ? gen(v[k], d + 1) : '<div class="space-y-1"><div class="text-xs font-semibold text-indigo-300">' + esc(k) + '</div>' + gen(v[k], d + 1) + '</div>';
+        });
+        return h;
+    }
+    return '';
+}
+function renderStudent() {
+    var grid = $('zkStCards'); if (!grid) return;
+    var list = myLessons();
+    if (selectedId && !list.some(function (r) { return r.id === selectedId; })) closeViewer(true);
+    $('zkStEmpty').classList.toggle('hidden', list.length > 0);
+    grid.classList.toggle('hidden', list.length === 0);
+    $('zkStCount').textContent = String(list.length);
+    grid.innerHTML = list.map(function (r) {
+        var on = r.id === selectedId;
+        return '<button type="button" data-zk-open="' + esc(r.id) + '" class="text-start glass-card p-4 rounded-2xl border transition space-y-2 ' + (on ? 'border-indigo-400 ring-2 ring-indigo-400/60 bg-indigo-600/20' : 'border-white/10 hover:border-indigo-400/50') + '">' +
+            '<div class="flex items-start justify-between gap-2"><h4 class="text-sm font-bold text-white break-words">' + safe(r.title) + '</h4>' + (on ? '<i class="fa-solid fa-circle-play text-indigo-300 mt-0.5"></i>' : '<i class="fa-solid fa-book-open text-indigo-400 mt-0.5"></i>') + '</div>' +
+            '<p class="text-xs text-slate-300" style="' + CLAMP + '">' + (safe(r.summary) || '') + '</p>' +
+            '<div class="text-[11px] text-slate-400">' + esc(fmtDate(r.createdAt)) + (counts(r) ? ' • ' + esc(counts(r)) : '') + '</div></button>';
+    }).join('');
+    var idx = list.findIndex(function (r) { return r.id === selectedId; });
+    $('zkStPrev').disabled = !(idx > 0); $('zkStNext').disabled = !(idx >= 0 && idx < list.length - 1);
+}
+function openLesson(id) {
+    try {
+        var r = lessons[id]; if (!r || !currentUser || !available(r, currentUser.username)) return;
+        var host = $('zkViewerHost'), cont = $('activeLessonContainer'); if (!host || !cont) return;
+        if (cont.parentNode !== host) {
+            if (!anchor) anchor = document.createComment('zk-lesson-anchor');
+            if (!anchor.parentNode) cont.parentNode.insertBefore(anchor, cont);
+            host.appendChild(cont);
+        }
+        selectedId = id;
+        var g = $('zkGenericContent');
+        if (hasText(r.lesson.content)) { g.innerHTML = '<div class="space-y-3">' + gen(r.lesson.content) + '</div>'; g.classList.remove('hidden'); } else { g.innerHTML = ''; g.classList.add('hidden'); }
+        $('zkViewerTitle').innerHTML = safe(r.title);
+        $('zkViewerArea').classList.remove('hidden');
+        currentLesson = JSON.parse(JSON.stringify(r.lesson));
+        renderLessonContent();
+        cont.classList.remove('hidden');
+        renderStudent();
+        $('zkViewerArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) { console.error(e); toast('تعذر عرض الدرس.', 'Could not display the lesson.', 'error'); }
+}
+function restoreContainer() {
+    try {
+        var cont = $('activeLessonContainer');
+        if (cont && anchor && anchor.parentNode && cont.parentNode !== anchor.parentNode) anchor.parentNode.insertBefore(cont, anchor.nextSibling);
+    } catch (e) { console.warn(e); }
+}
+function closeViewer(notify) {
+    var was = selectedId; selectedId = null;
+    try { if (typeof stopSpeech === 'function') stopSpeech(); if (typeof stopArcadeLoop === 'function') stopArcadeLoop(); } catch (e) { /* ignore */ }
+    var area = $('zkViewerArea'); if (area) area.classList.add('hidden');
+    if (was) { restoreContainer(); var cont = $('activeLessonContainer'); if (cont) cont.classList.add('hidden'); try { currentLesson = null; } catch (e) { /* ignore */ } }
+    if (was && notify) toast('لم يعد هذا الدرس متاحًا لك.', 'This lesson is no longer available to you.', 'error');
+}
+function step(dir) {
+    var list = myLessons(), i = list.findIndex(function (r) { return r.id === selectedId; }), n = list[i + dir];
+    if (n) openLesson(n.id);
+}
+
+/* ================= wiring ================= */
+function relabel() {
+    Array.prototype.forEach.call(document.querySelectorAll('[data-zk-ar]'), function (el) { el.textContent = t(el.getAttribute('data-zk-ar'), el.getAttribute('data-zk-en')); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-zk-ph-ar]'), function (el) { el.setAttribute('placeholder', t(el.getAttribute('data-zk-ph-ar'), el.getAttribute('data-zk-ph-en'))); });
+}
+function wrap(name, fn) {
+    var orig = window[name];
+    if (typeof orig !== 'function') { console.warn('zk: missing', name); return; }
+    window[name] = function () { var self = this, args = arguments; try { var pre = fn.pre && fn.pre.apply(self, args); if (pre === false) return; } catch (e) { console.warn(e); } var out = orig.apply(self, args); try { fn.post && fn.post.apply(self, args); } catch (e) { console.warn(e); } return out; };
+}
+function resetStudentTabs() {
+    closeViewer(false);
+    var my = $('studentTabLessons'), b = $('tabBtnLessons');
+    if (my) my.classList.add('hidden'); if (b) b.className = INACTIVE;
+}
+function init() {
+    lessons = cleanAll(loadLocal()); lastSig = JSON.stringify(Object.keys(lessons).length ? (function () { var o = {}; Object.keys(lessons).forEach(function (k) { o[k] = toWire(lessons[k]); }); return o; })() : {});
+    relabel();
+    var adm = $('zkAdmCards');
+    if (adm) adm.addEventListener('click', function (e) {
+        var b = e.target.closest ? e.target.closest('[data-zk-act]') : null; if (!b) return;
+        var id = b.getAttribute('data-id'), a = b.getAttribute('data-zk-act');
+        if (a === 'delete') deleteLesson(id); else if (a === 'target') openTarget(id);
+    });
+    var st = $('zkStCards');
+    if (st) st.addEventListener('click', function (e) { var b = e.target.closest ? e.target.closest('[data-zk-open]') : null; if (b) openLesson(b.getAttribute('data-zk-open')); });
+    Array.prototype.forEach.call(document.getElementsByName('zkTgAud'), function (x) { x.addEventListener('change', syncTgPanels); });
+    $('zkStPrev').addEventListener('click', function () { step(-1); });
+    $('zkStNext').addEventListener('click', function () { step(1); });
+
+    wrap('initAdminDashboard', { post: function () { window.zkAdminTab('general'); renderAdmin(); } });
+    wrap('initStudentDashboard', { post: function () { resetStudentTabs(); var a = $('studentTabLesson'), r = $('studentTabResults'); if (a) a.classList.remove('hidden'); if (r) r.classList.add('hidden'); var bl = $('tabBtnLesson'), br = $('tabBtnResults'); if (bl) bl.className = ACTIVE; if (br) br.className = INACTIVE; renderStudent(); } });
+    wrap('logoutUser', { pre: function () { resetStudentTabs(); } });
+    wrap('toggleLanguage', { post: function () { relabel(); renderAll(); } });
+    wrap('switchStudentTab', {
+        pre: function (name) {
+            var my = $('studentTabLessons'), b = $('tabBtnLessons'); if (!my || !b) return;
+            if (name === 'lessons') {
+                var l = $('studentTabLesson'), r = $('studentTabResults'), bl = $('tabBtnLesson'), br = $('tabBtnResults');
+                if (l) l.classList.add('hidden'); if (r) r.classList.add('hidden');
+                if (bl) bl.className = INACTIVE; if (br) br.className = INACTIVE;
+                my.classList.remove('hidden'); b.className = ACTIVE; renderStudent();
+                return false;
+            }
+            resetStudentTabs();
+        }
+    });
+
+    /* real-time sync: Firebase listener + local fallback */
+    if (cloudOn()) {
+        try {
+            var first = true;
+            db.ref('customLessons').on('value', function (snap) {
+                var remote = snap.val() || {}, local = cleanAll(loadLocal());
+                if (first) { /* push lessons created before cloud was reachable */
+                    first = false;
+                    Object.keys(local).forEach(function (k) { if (!remote[k]) { try { db.ref('customLessons/' + k).set(toWire(local[k])).catch(function (er) { cloudWarn(er); }); } catch (e) { console.warn(e); } } });
+                }
+                lessons = cleanAll(remote); saveLocal(); renderAll();
+            }, function (err) {
+                console.warn('customLessons listener:', err && err.message);
+                cloudBad = true; lessons = cleanAll(loadLocal()); renderAll();
+                toast('تعذر قراءة الدروس من Firebase؛ يعمل النظام محليًا.', 'Cannot read lessons from Firebase; running locally.', 'error');
+            });
+        } catch (e) { console.warn(e); }
+    }
+    var localSync = function () {
+        if (cloudOn()) return;
+        try { var s = localStorage.getItem(LS_KEY) || '{}'; if (s !== lastSig) { lastSig = s; lessons = cleanAll(JSON.parse(s)); renderAll(); } } catch (e) { /* ignore */ }
+    };
+    window.addEventListener('storage', function (e) { if (e.key === LS_KEY) localSync(); });
+    setInterval(localSync, 5000);
+    renderAll();
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+window.__zkLessons = { parseLessonJSON: parseLessonJSON, fromWire: fromWire, toWire: toWire, available: available };
+})();
 
 </script>
 </body>
