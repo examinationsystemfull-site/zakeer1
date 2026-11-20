@@ -83,6 +83,25 @@
         .rec-live-dot {
             animation: recPulse 1.2s ease-in-out infinite;
         }
+        /* ---- Unified voice workspace: reading-speed slider ---- */
+        #ttsRateSlider {
+            -webkit-appearance: none; appearance: none;
+            height: 6px; border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.18);
+            outline: none; cursor: pointer;
+        }
+        #ttsRateSlider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #6366f1; border: 2px solid #fff;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.7);
+        }
+        #ttsRateSlider::-moz-range-thumb {
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #6366f1; border: 2px solid #fff;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.7);
+        }
+        #ttsRateSlider:focus-visible { box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.45); }
         @keyframes recPulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.35; }
@@ -497,67 +516,77 @@
                         </div>
                     </div>
 
-                    <!-- 5. Text-to-Speech (TTS) & Student Voice Recorder -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="glass-card p-6 rounded-3xl space-y-4">
-                            <h3 class="text-lg font-bold text-white flex items-center space-x-2 rtl:space-x-reverse">
-                                <i class="fa-solid fa-volume-high text-indigo-400"></i>
-                                <span data-i18n="ttsTitle">قارئ النصوص الذكي (TTS)</span>
+                    <!-- 5. Unified Workspace: Smart Reader (TTS) + Student Voice Recorder (STT) + Accuracy Ring -->
+                    <section id="voiceWorkspace" class="glass-card p-5 sm:p-8 rounded-3xl space-y-6 border border-indigo-500/30 shadow-2xl">
+                        <header class="space-y-1">
+                            <h3 class="text-lg sm:text-xl font-bold text-white flex items-center space-x-2 rtl:space-x-reverse">
+                                <i class="fa-solid fa-wave-square text-indigo-400"></i>
+                                <span data-i18n="voiceWorkspaceTitle">مساحة القراءة والتسجيل الذكية</span>
                             </h3>
-                            <p class="text-xs text-slate-300" data-i18n="ttsDesc">اكتب أي نص أو قم بلصقه ليقوم المتصفح بقراءته بصوت واضح.</p>
-                            <textarea id="ttsTextInput" rows="3" class="w-full px-4 py-3 rounded-xl glass-input text-sm resize-none" placeholder="اكتب النص هنا للقراءة..."></textarea>
-                            <div class="flex space-x-3 rtl:space-x-reverse">
-                                <button type="button" onclick="speakText()" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition flex items-center space-x-2 rtl:space-x-reverse">
-                                    <i class="fa-solid fa-play"></i>
-                                    <span data-i18n="speakBtn">قراءة النص</span>
-                                </button>
-                                <button type="button" onclick="stopSpeech()" class="px-5 py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 font-medium text-sm transition flex items-center space-x-2 rtl:space-x-reverse">
-                                    <i class="fa-solid fa-stop"></i>
-                                    <span data-i18n="stopSpeakBtn">إيقاف</span>
-                                </button>
-                            </div>
+                            <p class="text-xs text-slate-300" data-i18n="voiceWorkspaceDesc">استمع إلى النص، ثم اقرأه بصوتك وشاهد نسبة التطابق مباشرة.</p>
+                        </header>
+
+                        <!-- Inline alert (unsupported browser / microphone permission problems) -->
+                        <div id="voiceAlert" role="alert" style="display:none" class="items-start gap-3 p-3 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-200 text-xs sm:text-sm">
+                            <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                            <span id="voiceAlertText" class="min-w-0"></span>
                         </div>
 
-                        <div class="glass-card p-6 rounded-3xl space-y-4">
-                            <h3 class="text-lg font-bold text-white flex items-center space-x-2 rtl:space-x-reverse">
-                                <i class="fa-solid fa-microphone text-indigo-400"></i>
-                                <span data-i18n="recorderTitle">مسجل صوت الطالب</span>
-                            </h3>
-                            <p class="text-xs text-slate-300" data-i18n="recorderDesc">سجل صوتك للإجابة على الأسئلة الشفوية أو لمراجعة نطقك.</p>
-                            <div class="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
-                                <div id="recorderStatus" class="text-sm font-medium text-slate-300" data-i18n="recorderReady">جاهز للتسجيل</div>
-                                <div class="flex space-x-2 rtl:space-x-reverse">
-                                    <button type="button" id="startRecordBtn" onclick="startVoiceRecording()" class="w-10 h-10 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center transition shadow-lg shadow-rose-600/30" title="بدء التسجيل">
-                                        <i class="fa-solid fa-circle"></i>
-                                    </button>
-                                    <button type="button" id="stopRecordBtn" onclick="stopVoiceRecording()" disabled class="w-10 h-10 rounded-xl bg-slate-600/50 text-slate-400 flex items-center justify-center transition cursor-not-allowed" title="إيقاف التسجيل">
-                                        <i class="fa-solid fa-square"></i>
-                                    </button>
+                        <!-- Shared language selector (drives both TTS voice language and speech-recognition language) -->
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <label for="recognitionLangSelect" class="text-xs text-slate-300 flex items-center space-x-2 rtl:space-x-reverse">
+                                <i class="fa-solid fa-language text-indigo-400"></i>
+                                <span data-i18n="recognitionLangLabel">لغة القراءة والتعرف على الصوت</span>
+                            </label>
+                            <select id="recognitionLangSelect" class="px-3 py-1.5 rounded-lg glass-input text-xs bg-slate-900/60 max-w-full">
+                                <option value="auto" data-i18n="recognitionLangAuto" class="text-slate-900">تلقائي (حسب نص القارئ)</option>
+                                <option value="ar-SA" data-i18n="recognitionLangAr" class="text-slate-900">العربية</option>
+                                <option value="en-US" data-i18n="recognitionLangEn" class="text-slate-900">English</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-5 lg:gap-6 items-stretch">
+                            <!-- Reference text + TTS controls -->
+                            <div class="min-w-0 flex flex-col space-y-3 p-4 rounded-2xl bg-white/5 border border-white/10">
+                                <h4 class="text-base font-bold text-white flex items-center space-x-2 rtl:space-x-reverse">
+                                    <i class="fa-solid fa-volume-high text-indigo-400"></i>
+                                    <span data-i18n="ttsTitle">قارئ النصوص الذكي (TTS)</span>
+                                </h4>
+                                <p class="text-xs text-slate-300" data-i18n="ttsDesc">اكتب أي نص أو قم بلصقه ليقوم المتصفح بقراءته بصوت واضح.</p>
+                                <label for="ttsTextInput" class="sr-only" data-i18n="referenceTextLabel">النص المرجعي</label>
+                                <textarea id="ttsTextInput" rows="5" dir="auto" class="w-full flex-1 min-h-[7.5rem] px-4 py-3 rounded-xl glass-input text-sm resize-none" data-i18n-placeholder="ttsPlaceholder" placeholder="اكتب النص هنا للقراءة..."></textarea>
+                                <!-- TTS controls bar -->
+                                <div class="space-y-3">
+                                    <div class="flex flex-wrap gap-2 sm:gap-3">
+                                        <button type="button" onclick="speakText()" class="px-4 sm:px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition flex items-center space-x-2 rtl:space-x-reverse">
+                                            <i class="fa-solid fa-play"></i>
+                                            <span data-i18n="speakBtn">قراءة النص</span>
+                                        </button>
+                                        <button type="button" onclick="stopSpeech()" class="px-4 sm:px-5 py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 border border-rose-500/30 font-medium text-sm transition flex items-center space-x-2 rtl:space-x-reverse">
+                                            <i class="fa-solid fa-stop"></i>
+                                            <span data-i18n="stopSpeakBtn">إيقاف</span>
+                                        </button>
+                                    </div>
+                                    <div class="flex items-center gap-3 px-3 py-2 rounded-xl bg-white/5 border border-white/10">
+                                        <label for="ttsRateSlider" class="text-xs text-slate-300 whitespace-nowrap flex items-center space-x-2 rtl:space-x-reverse">
+                                            <i class="fa-solid fa-gauge-high text-indigo-400"></i>
+                                            <span data-i18n="speechRateLabel">سرعة القراءة</span>
+                                        </label>
+                                        <input type="range" id="ttsRateSlider" min="0.5" max="2" step="0.1" value="1" oninput="onTtsRateChange()" class="flex-1 min-w-0" dir="ltr">
+                                        <span id="ttsRateBadge" dir="ltr" class="px-2.5 py-0.5 rounded-full bg-indigo-500/20 border border-indigo-400/40 text-indigo-200 text-xs font-bold tabular-nums min-w-[3.25rem] text-center">1.0x</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between gap-2">
-                                    <label for="recognitionLangSelect" class="text-xs text-slate-300" data-i18n="recognitionLangLabel">لغة التعرف على الصوت</label>
-                                    <select id="recognitionLangSelect" class="px-3 py-1.5 rounded-lg glass-input text-xs bg-slate-900/60">
-                                        <option value="auto" data-i18n="recognitionLangAuto" class="text-slate-900">تلقائي (حسب نص القارئ)</option>
-                                        <option value="ar-SA" data-i18n="recognitionLangAr" class="text-slate-900">العربية</option>
-                                        <option value="en-US" data-i18n="recognitionLangEn" class="text-slate-900">English</option>
-                                    </select>
-                                </div>
-                                <label for="recognizedTextBox" class="text-xs font-semibold text-slate-300 flex items-center space-x-2 rtl:space-x-reverse">
-                                    <i class="fa-solid fa-closed-captioning text-indigo-400"></i>
-                                    <span data-i18n="recognizedTextLabel">النص المكتوب من صوتك (للعرض فقط)</span>
-                                </label>
-                                <textarea id="recognizedTextBox" rows="3" readonly dir="auto" class="w-full px-4 py-3 rounded-xl glass-input text-sm resize-none cursor-default" data-i18n-placeholder="recognizedTextPlaceholder" placeholder="سيظهر هنا النص الذي تنطق به تلقائياً..."></textarea>
-                            </div>
-                            <div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
-                                <div id="matchRingWrap" class="match-ring-wrap relative w-28 h-28 shrink-0" role="img" aria-live="polite">
+
+                            <!-- Glowing accuracy ring (sits between reference and recorded text) -->
+                            <div class="flex flex-col items-center justify-center text-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/10 lg:w-52">
+                                <div id="matchRingWrap" class="match-ring-wrap relative w-32 h-32 sm:w-36 sm:h-36 shrink-0" role="img" aria-live="polite">
                                     <svg viewBox="0 0 120 120" class="w-full h-full">
                                         <circle cx="60" cy="60" r="52" fill="rgba(15,23,42,0.55)" stroke="rgba(255,255,255,0.12)" stroke-width="8"></circle>
                                         <circle id="matchRingProgress" class="match-ring-progress" cx="60" cy="60" r="52" fill="none" stroke="#64748b" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73"></circle>
                                     </svg>
                                     <div class="absolute inset-0 flex items-center justify-center">
-                                        <span id="matchPercentText" class="text-2xl font-extrabold text-white" dir="ltr">--</span>
+                                        <span id="matchPercentText" class="text-2xl sm:text-3xl font-extrabold text-white" dir="ltr">--</span>
                                     </div>
                                 </div>
                                 <div class="space-y-1 min-w-0">
@@ -565,12 +594,37 @@
                                     <p id="matchHint" class="text-xs text-slate-300 leading-relaxed" data-i18n="matchHintIdle">اكتب نصاً في قارئ النصوص ثم سجّل صوتك لمقارنته.</p>
                                 </div>
                             </div>
-                            <div id="audioPlaybackContainer" class="hidden space-y-2">
-                                <audio id="recordedAudioPlayback" controls class="w-full"></audio>
-                                <a id="downloadAudioLink" download="my-recording.webm" class="text-xs text-indigo-400 hover:underline block text-center" data-i18n="downloadRecording">تحميل التسجيل الصوتي (.webm)</a>
+
+                            <!-- Recorder controls + read-only recorded text -->
+                            <div class="min-w-0 flex flex-col space-y-3 p-4 rounded-2xl bg-white/5 border border-white/10">
+                                <h4 class="text-base font-bold text-white flex items-center space-x-2 rtl:space-x-reverse">
+                                    <i class="fa-solid fa-microphone text-indigo-400"></i>
+                                    <span data-i18n="recorderTitle">مسجل صوت الطالب</span>
+                                </h4>
+                                <p class="text-xs text-slate-300" data-i18n="recorderDesc">سجل صوتك للإجابة على الأسئلة الشفوية أو لمراجعة نطقك.</p>
+                                <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-white/5 border border-white/10">
+                                    <div id="recorderStatus" class="text-sm font-medium text-slate-300 min-w-0" data-i18n="recorderReady">جاهز للتسجيل</div>
+                                    <div class="flex space-x-2 rtl:space-x-reverse shrink-0">
+                                        <button type="button" id="startRecordBtn" onclick="startVoiceRecording()" class="w-10 h-10 rounded-xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center transition shadow-lg shadow-rose-600/30" title="بدء التسجيل">
+                                            <i class="fa-solid fa-circle"></i>
+                                        </button>
+                                        <button type="button" id="stopRecordBtn" onclick="stopVoiceRecording()" disabled class="w-10 h-10 rounded-xl bg-slate-600/50 text-slate-400 flex items-center justify-center transition cursor-not-allowed" title="إيقاف التسجيل">
+                                            <i class="fa-solid fa-square"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <label for="recognizedTextBox" class="text-xs font-semibold text-slate-300 flex items-center space-x-2 rtl:space-x-reverse">
+                                    <i class="fa-solid fa-closed-captioning text-indigo-400"></i>
+                                    <span data-i18n="recognizedTextLabel">النص المسجل (للعرض فقط)</span>
+                                </label>
+                                <textarea id="recognizedTextBox" rows="5" readonly dir="auto" class="w-full flex-1 min-h-[7.5rem] px-4 py-3 rounded-xl glass-input text-sm resize-none cursor-default" data-i18n-placeholder="recognizedTextPlaceholder" placeholder="سيظهر هنا النص الذي تنطق به تلقائياً..."></textarea>
+                                <div id="audioPlaybackContainer" class="hidden space-y-2">
+                                    <audio id="recordedAudioPlayback" controls class="w-full"></audio>
+                                    <a id="downloadAudioLink" download="my-recording.webm" class="text-xs text-indigo-400 hover:underline block text-center" data-i18n="downloadRecording">تحميل التسجيل الصوتي (.webm)</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
                     <!-- 6. Interactive 10-Question MCQ Quiz Section -->
                     <div class="glass-card p-6 sm:p-8 rounded-3xl space-y-6 border border-indigo-500/40 shadow-2xl">
@@ -1179,17 +1233,28 @@
                 matchingDefsCol: "التعريفات / الشرح",
                 ttsTitle: "قارئ النصوص الذكي (TTS)",
                 ttsDesc: "اكتب أي نص أو قم بلصقه ليقوم المتصفح بقراءته بصوت واضح.",
+                ttsPlaceholder: "اكتب النص هنا للقراءة...",
+                voiceWorkspaceTitle: "مساحة القراءة والتسجيل الذكية",
+                voiceWorkspaceDesc: "استمع إلى النص، ثم اقرأه بصوتك وشاهد نسبة التطابق مباشرة.",
+                referenceTextLabel: "النص المرجعي",
+                speechRateLabel: "سرعة القراءة",
+                voiceAlertMicDenied: "تم رفض إذن الميكروفون. اسمح للموقع باستخدام الميكروفون من إعدادات المتصفح ثم أعد المحاولة.",
+                voiceAlertMicMissing: "لم يتم العثور على ميكروفون متصل بجهازك.",
+                voiceAlertMicBusy: "تعذر تشغيل الميكروفون، قد يكون مستخدماً من تطبيق آخر.",
+                voiceAlertMicUnsupported: "متصفحك أو سياق الصفحة الحالي لا يدعم تسجيل الصوت (يلزم اتصال HTTPS أو متصفح حديث).",
+                voiceAlertLangUnsupported: "اللغة المحددة غير مدعومة للتعرف على الصوت في متصفحك.",
+                voiceAlertTtsUnsupported: "متصفحك لا يدعم خاصية القراءة الصوتية (TTS).",
                 speakBtn: "قراءة النص",
                 stopSpeakBtn: "إيقاف",
                 recorderTitle: "مسجل صوت الطالب",
                 recorderDesc: "سجل صوتك للإجابة على الأسئلة الشفوية أو لمراجعة نطقك.",
                 recorderReady: "جاهز للتسجيل",
                 downloadRecording: "تحميل التسجيل الصوتي (.webm)",
-                recognitionLangLabel: "لغة التعرف على الصوت",
+                recognitionLangLabel: "لغة القراءة والتعرف على الصوت",
                 recognitionLangAuto: "تلقائي (حسب نص القارئ)",
                 recognitionLangAr: "العربية",
                 recognitionLangEn: "English",
-                recognizedTextLabel: "النص المكتوب من صوتك (للعرض فقط)",
+                recognizedTextLabel: "النص المسجل / Recorded Speech (للعرض فقط)",
                 recognizedTextPlaceholder: "سيظهر هنا النص الذي تنطق به تلقائياً...",
                 matchRatioTitle: "نسبة التطابق",
                 matchHintIdle: "اكتب نصاً في قارئ النصوص ثم سجّل صوتك لمقارنته.",
@@ -1320,17 +1385,28 @@
                 matchingDefsCol: "Definitions / Explanation",
                 ttsTitle: "Text-to-Speech (TTS)",
                 ttsDesc: "Type or paste any text to have the browser read it aloud clearly.",
+                ttsPlaceholder: "Type the text to read here...",
+                voiceWorkspaceTitle: "Smart Reading & Recording Workspace",
+                voiceWorkspaceDesc: "Listen to the text, read it aloud yourself, and watch your match rate live.",
+                referenceTextLabel: "Reference text",
+                speechRateLabel: "Reading speed",
+                voiceAlertMicDenied: "Microphone permission was denied. Allow microphone access in your browser settings, then try again.",
+                voiceAlertMicMissing: "No microphone was found on your device.",
+                voiceAlertMicBusy: "The microphone could not be started; another app may be using it.",
+                voiceAlertMicUnsupported: "Your browser or the current page context does not support audio recording (HTTPS or a modern browser is required).",
+                voiceAlertLangUnsupported: "The selected language is not supported for speech recognition in your browser.",
+                voiceAlertTtsUnsupported: "Your browser does not support speech synthesis (TTS).",
                 speakBtn: "Read Text",
                 stopSpeakBtn: "Stop",
                 recorderTitle: "Student Voice Recorder",
                 recorderDesc: "Record your voice to answer oral questions or practice pronunciation.",
                 recorderReady: "Ready to record",
                 downloadRecording: "Download Recording (.webm)",
-                recognitionLangLabel: "Speech recognition language",
-                recognitionLangAuto: "Auto (follows TTS text)",
+                recognitionLangLabel: "Reading & speech recognition language",
+                recognitionLangAuto: "Auto (follows reference text)",
                 recognitionLangAr: "العربية",
                 recognitionLangEn: "English",
-                recognizedTextLabel: "Text transcribed from your voice (view only)",
+                recognizedTextLabel: "Recorded Speech / النص المسجل (read-only)",
                 recognizedTextPlaceholder: "The words you speak will appear here automatically...",
                 matchRatioTitle: "Match Rate",
                 matchHintIdle: "Type text in the TTS reader, then record your voice to compare.",
@@ -1454,6 +1530,7 @@
         let finalTranscript = '';
         let interimTranscript = '';
         let lastMatchPercent = null;
+        let voiceAlertKey = null;
         let activeAudioCardIndex = null;
 
         const DEFAULT_ADMIN = { username: "admin", password: "123" };
@@ -2461,19 +2538,52 @@
         /* ==========================================================
            10. TEXT-TO-SPEECH & VOICE RECORDER
            ========================================================== */
+        /* ---------- TTS reading speed (bound to utterance.rate) ---------- */
+        const TTS_RATE_MIN = 0.5;
+        const TTS_RATE_MAX = 2.0;
+        const TTS_RATE_DEFAULT = 1.0;
+
+        // Always returns a safe number in [0.5, 2.0].
+        function getTtsRate() {
+            const slider = document.getElementById('ttsRateSlider');
+            const value = parseFloat(slider ? slider.value : TTS_RATE_DEFAULT);
+            if (!Number.isFinite(value)) return TTS_RATE_DEFAULT;
+            return Math.min(TTS_RATE_MAX, Math.max(TTS_RATE_MIN, value));
+        }
+
+        // Updates the live badge; the value is applied to the next utterance (play / resume).
+        function onTtsRateChange() {
+            const badge = document.getElementById('ttsRateBadge');
+            const slider = document.getElementById('ttsRateSlider');
+            const label = `${getTtsRate().toFixed(1)}x`;
+            if (badge) badge.textContent = label;
+            if (slider) slider.setAttribute('aria-valuetext', label);
+        }
+
         function speakText() {
             const text = document.getElementById('ttsTextInput').value.trim();
             if (!text) {
                 showToast(currentLang === 'ar' ? 'الرجاء إدخال نص للقراءة.' : 'Please enter text to read.', 'error');
                 return;
             }
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = currentLang === 'ar' ? 'ar-SA' : 'en-US';
-                window.speechSynthesis.speak(utterance);
-                showToast(currentLang === 'ar' ? 'جاري قراءة النص...' : 'Reading text...');
+            if ('speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined') {
+                try {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = resolveRecognitionLang();
+                    utterance.rate = getTtsRate();
+                    utterance.onerror = event => {
+                        if (event && (event.error === 'canceled' || event.error === 'interrupted')) return;
+                        showToast(currentLang === 'ar' ? 'تعذر تشغيل القراءة الصوتية.' : 'Could not play speech.', 'error');
+                    };
+                    window.speechSynthesis.speak(utterance);
+                    showToast(currentLang === 'ar' ? 'جاري قراءة النص...' : 'Reading text...');
+                } catch (err) {
+                    console.warn('Speech synthesis failed', err);
+                    showToast(currentLang === 'ar' ? 'تعذر تشغيل القراءة الصوتية.' : 'Could not play speech.', 'error');
+                }
             } else {
+                showVoiceAlert('voiceAlertTtsUnsupported');
                 showToast(currentLang === 'ar' ? 'متصفحك لا يدعم خاصية القراءة الصوتية.' : 'Speech synthesis not supported.', 'error');
             }
         }
@@ -2502,6 +2612,19 @@
             document.getElementById('recognitionLangSelect').disabled = recording;
         }
 
+        /* ---------- Inline voice alerts (key-based so they follow the language toggle) ---------- */
+        function renderVoiceAlert() {
+            const box = document.getElementById('voiceAlert');
+            const text = document.getElementById('voiceAlertText');
+            if (!box || !text) return;
+            const message = voiceAlertKey ? translations[currentLang][voiceAlertKey] : '';
+            text.textContent = message || '';
+            box.style.display = message ? 'flex' : 'none';
+        }
+        function showVoiceAlert(key) { voiceAlertKey = key; renderVoiceAlert(); }
+        function clearVoiceAlert() { voiceAlertKey = null; renderVoiceAlert(); }
+
+        // Shared by TTS (utterance.lang) and speech recognition (recognizer.lang).
         function resolveRecognitionLang() {
             const selected = document.getElementById('recognitionLangSelect').value;
             if (selected !== 'auto') return selected;
@@ -2580,6 +2703,7 @@
         }
 
         function refreshMatchUI() {
+            renderVoiceAlert();
             const hint = document.getElementById('matchHint');
             if (!hint) return;
             const reference = document.getElementById('ttsTextInput').value.trim();
@@ -2612,6 +2736,7 @@
         /* ---------- Speech recognition ---------- */
         function startSpeechRecognition() {
             if (!SpeechRecognitionCtor) {
+                showVoiceAlert('speechRecognitionUnsupported');
                 showToast(translations[currentLang].speechRecognitionUnsupported, 'error');
                 return;
             }
@@ -2636,8 +2761,10 @@
             recognizer.onerror = event => {
                 if (event.error === 'no-speech' || event.error === 'aborted') return;
                 if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                    showVoiceAlert('voiceAlertMicDenied');
                     showToast(currentLang === 'ar' ? 'تعذر الوصول للميكروفون.' : 'Microphone access denied.', 'error');
                 } else if (event.error === 'language-not-supported') {
+                    showVoiceAlert('voiceAlertLangUnsupported');
                     showToast(currentLang === 'ar' ? 'اللغة المحددة غير مدعومة في متصفحك.' : 'Selected language is not supported by your browser.', 'error');
                 }
             };
@@ -2679,12 +2806,19 @@
 
         /* ---------- Recording control ---------- */
         async function startVoiceRecording() {
+            clearVoiceAlert();
+            stopSpeech(); // keep the reference voice out of the student's recording
             audioChunks = [];
             committedTranscript = '';
             finalTranscript = '';
             interimTranscript = '';
             document.getElementById('recognizedTextBox').value = '';
             try {
+                if (!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function' || typeof MediaRecorder === 'undefined') {
+                    const unsupported = new Error('unsupported');
+                    unsupported.name = 'NotSupportedError';
+                    throw unsupported;
+                }
                 mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(mediaStream);
                 mediaRecorder.ondataavailable = event => {
@@ -2708,6 +2842,13 @@
             } catch (err) {
                 releaseMicrophone();
                 isRecordingVoice = false;
+                stopSpeechRecognition();
+                setRecorderButtons(false);
+                const name = err && err.name;
+                if (name === 'NotFoundError' || name === 'DevicesNotFoundError') showVoiceAlert('voiceAlertMicMissing');
+                else if (name === 'NotReadableError' || name === 'AbortError') showVoiceAlert('voiceAlertMicBusy');
+                else if (name === 'NotSupportedError' || name === 'TypeError') showVoiceAlert('voiceAlertMicUnsupported');
+                else showVoiceAlert('voiceAlertMicDenied');
                 showToast(currentLang === 'ar' ? 'تعذر الوصول للميكروفون.' : 'Microphone access denied.', 'error');
             }
         }
@@ -2749,6 +2890,11 @@
 
         // Recompute the ratio whenever the TTS reference text changes.
         document.getElementById('ttsTextInput').addEventListener('input', refreshMatchUI);
+
+        // Browser-compatibility notice shown once at load (recording still works without speech recognition).
+        if (!SpeechRecognitionCtor) showVoiceAlert('speechRecognitionUnsupported');
+        else if (!('speechSynthesis' in window)) showVoiceAlert('voiceAlertTtsUnsupported');
+        onTtsRateChange();
 
         /* ==========================================================
            11. MCQ QUIZ SUBMISSION, RESULTS TABLE & STUDENT CERTIFICATE
@@ -3495,7 +3641,7 @@ function renderLessonContent() {
         };
         if (avail.video) renderVideosSection(lesson, container);
         secs.video = $id('secVideos');
-        const tools = $id('ttsTextInput').closest('.grid');
+        const tools = $id('voiceWorkspace');
         const defaultOrder = ['images', 'audio', 'cards', 'video', 'games', 'quiz'];
         const order = flexible ? lesson.layout.concat(defaultOrder.filter(k => !lesson.layout.includes(k))) : defaultOrder;
 
