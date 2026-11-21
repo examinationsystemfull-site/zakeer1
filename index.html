@@ -235,6 +235,39 @@
         .msg-unread{background:rgba(99,102,241,.14);font-weight:700}
         .msg-read{opacity:.78}
     </style>
+    <style id="zk-student-ext-style">
+        /* Achievements report: hidden on screen, printed alone via body.zk-printing-ach */
+        #achievementsPrintRoot { display: none; }
+        #resFltReset:disabled { cursor: not-allowed; }
+        @media print {
+            html body.zk-printing-ach, html[data-theme] body.zk-printing-ach { background: #fff !important; color: #0f172a !important; display: block !important; min-height: 0 !important; }
+            body.zk-printing-ach > *:not(#achievementsPrintRoot) { display: none !important; }
+            body.zk-printing-ach #achievementsPrintRoot { display: block !important; visibility: visible !important; position: static !important; width: 100% !important; margin: 0; padding: 0; background: #fff; color: #0f172a; font-family: 'Tajawal', 'Inter', sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body.zk-printing-ach #achievementsPrintRoot * { visibility: visible !important; box-sizing: border-box; }
+            .zkp-doc { font-size: 12px; line-height: 1.6; }
+            .zkp-card { border: 1.5px solid #4f46e5; border-radius: 14px; padding: 16px 18px; background: linear-gradient(135deg, #eef2ff, #f5f3ff) !important; margin-bottom: 14px; break-inside: avoid; page-break-inside: avoid; }
+            .zkp-brand { font-size: 11px; font-weight: 700; color: #4f46e5; }
+            .zkp-title { font-size: 20px; font-weight: 800; margin: 2px 0 10px; color: #1e1b4b; }
+            .zkp-namebox { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+            .zkp-namelabel { font-size: 11px; color: #64748b; font-weight: 600; }
+            .zkp-name { font-size: 22px; font-weight: 900; color: #0f172a; overflow-wrap: anywhere; }
+            .zkp-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+            .zkp-chip { border: 1px solid #c7d2fe; background: #fff !important; border-radius: 999px; padding: 3px 10px; font-size: 11px; color: #312e81; }
+            .zkp-chip b { font-weight: 800; }
+            .zkp-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+            .zkp-table th { background: #4f46e5 !important; color: #fff; font-size: 11px; padding: 8px 6px; text-align: start; border: 1px solid #4338ca; }
+            .zkp-table td { padding: 7px 6px; border: 1px solid #cbd5e1; vertical-align: top; font-size: 11.5px; overflow-wrap: anywhere; word-break: break-word; color: #0f172a; }
+            .zkp-table thead { display: table-header-group; }
+            .zkp-table tr { break-inside: avoid; page-break-inside: avoid; }
+            .zkp-table tbody tr:nth-child(even) td { background: #f8fafc !important; }
+            .zkp-pass { color: #047857 !important; font-weight: 800; }
+            .zkp-fail { color: #be123c !important; font-weight: 800; }
+            .zkp-ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+            .zkp-gp { display: inline-block; min-width: 2.2em; text-align: center; padding: 1px 8px; border-radius: 999px; background: #fef3c7 !important; border: 1px solid #f59e0b; color: #92400e; font-weight: 800; }
+            .zkp-gpsub { display: block; font-size: 9px; color: #64748b; margin-top: 2px; }
+            .zkp-foot { margin-top: 12px; font-size: 10px; color: #64748b; text-align: center; }
+        }
+    </style>
 </head>
 <body class="text-slate-100 flex flex-col min-h-full">
 
@@ -403,10 +436,11 @@
                         <p class="text-xs text-indigo-300" data-i18n="studentDashboardSub">استعرض الدروس، تفاعل مع الوسائط والألعاب، وقم بإجراء الاختبارات</p>
                     </div>
                 </div>
-                <div class="flex items-center space-x-2 rtl:space-x-reverse bg-white/5 p-1.5 rounded-2xl border border-white/10">
+                <div class="flex flex-wrap items-center justify-center gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10">
                     <button onclick="switchStudentTab('lesson')" id="tabBtnLesson" class="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white transition shadow" data-i18n="tabLesson">استعراض الدرس</button>
                     <button onclick="switchStudentTab('results')" id="tabBtnResults" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition" data-i18n="tabResults">نتائجي وشهاداتي</button>
                     <button onclick="switchStudentTab('lessons')" id="tabBtnLessons" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition" data-zk-ar="عرض الدروس" data-zk-en="View Lessons">عرض الدروس</button>
+                    <button type="button" onclick="switchStudentTab('messages')" id="tabBtnMessages" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition"><span class="inline-flex items-center gap-2"><i class="fa-solid fa-envelope"></i><span data-zk-ar="رسائلي مع المدير" data-zk-en="My Messages">رسائلي مع المدير</span><span id="stuTabUnreadBadge" class="hidden px-2 py-0.5 rounded-full bg-emerald-500/25 text-emerald-200 border border-emerald-400/40 text-[10px] font-bold leading-none">0</span></span></button>
                 </div>
             </div>
 
@@ -759,36 +793,6 @@
                     <h3 class="text-xl font-bold text-white" data-i18n="noLessonTitle">لم يتم تحميل أي درس بعد</h3>
                     <p class="text-slate-300 text-sm max-w-md mx-auto" data-i18n="noLessonDesc">قم برفع ملف JSON للدرس أو اضغط على زر "تحميل الدرس التجريبي" أعلاه لبدء التعلم والتفاعل.</p>
                 </div>
-            <div class="mt-8"><div class="glass-card p-6 sm:p-8 rounded-3xl space-y-6 border border-indigo-500/30 shadow-2xl" id="stuMsgPanel">
-                <div class="flex items-center justify-between gap-3">
-                    <h3 class="text-lg font-bold text-white flex items-center space-x-2 rtl:space-x-reverse">
-                        <i class="fa-solid fa-envelope text-indigo-400"></i><span>رسائلي مع المدير / My Messages</span>
-                        <span id="stuUnreadBadge" class="hidden px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold">0</span>
-                    </h3>
-                    <div class="flex items-center gap-2 flex-wrap justify-end">
-                        <button type="button" id="admMsgDeleteAllBtn" onclick="openMsgDeleteAllModal()" class="px-3.5 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/40 text-xs font-bold transition flex items-center gap-1.5"><i class="fa-solid fa-trash-can"></i><span>حذف جميع الرسائل / Delete all messages</span></button>
-                        <button type="button" onclick="renderAllMessages()" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-indigo-300 transition" title="تحديث / Refresh"><i class="fa-solid fa-rotate"></i></button>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <form onsubmit="handleSendMessage(event,'stu')" class="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/10 h-fit">
-                        <label class="block text-xs font-medium text-slate-300">المستلم / Recipient
-                            <select id="stuMsgTo" required class="mt-1 w-full px-4 py-2.5 rounded-xl glass-input text-sm"><option value="__admin__">المدير / Admin</option></select>
-                        </label>
-                        <input type="text" id="stuMsgSubject" required maxlength="120" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="العنوان / Subject">
-                        <textarea id="stuMsgText" required rows="4" maxlength="2000" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm resize-none" placeholder="المحتوى / Message"></textarea>
-                        <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-lg flex items-center justify-center space-x-2 rtl:space-x-reverse"><i class="fa-solid fa-paper-plane"></i><span>إرسال / Send</span></button>
-                    </form>
-                    <div class="lg:col-span-2 overflow-x-auto rounded-2xl border border-white/10 max-h-[28rem] overflow-y-auto">
-                        <table class="w-full text-right rtl:text-right ltr:text-left text-sm">
-                            <thead class="bg-white/5 text-xs text-indigo-300 uppercase border-b border-white/10 sticky top-0"><tr>
-                                <th class="px-3 py-3">الاتجاه / Dir</th><th class="px-3 py-3">الطرف الآخر / Party</th><th class="px-3 py-3">العنوان والمحتوى / Message</th><th class="px-3 py-3">الوقت / Time</th><th class="px-3 py-3">الحالة / Status</th>
-                            </tr></thead>
-                            <tbody id="stuMsgTable" class="divide-y divide-white/10"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div></div>
             </div>
 
             <!-- TAB 3: CUSTOM LESSONS VIEWER (عرض الدروس) -->
@@ -842,6 +846,47 @@
                     </div>
                 </div>
 
+                <!-- Smart Query / Filter Bar (above the detailed results log) -->
+                <div id="resultsSmartQueryBar" class="glass-card p-4 sm:p-5 rounded-3xl border border-indigo-500/30 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <h3 class="text-base font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-filter text-indigo-400"></i>
+                            <span data-zk-ar="استعلام ذكي في النتائج" data-zk-en="Smart Results Query">استعلام ذكي في النتائج</span>
+                        </h3>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span id="resFltInfo" class="text-xs text-slate-300" aria-live="polite"></span>
+                            <button type="button" id="resFltReset" onclick="resetResultsFilters()" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-indigo-300 transition flex items-center gap-1.5"><i class="fa-solid fa-rotate-left"></i><span data-zk-ar="إعادة ضبط" data-zk-en="Reset">إعادة ضبط</span></button>
+                            <button type="button" onclick="openAchievementsModal()" class="px-4 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-400/40 text-xs font-bold transition flex items-center gap-1.5 shadow"><i class="fa-solid fa-trophy"></i><span data-zk-ar="إنجازاتي" data-zk-en="My Achievements">إنجازاتي</span></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <label class="block text-xs font-medium text-slate-300 lg:col-span-2"><span data-zk-ar="عنوان الدرس" data-zk-en="Lesson title">عنوان الدرس</span>
+                            <input type="text" id="resFltTitle" list="resFltTitles" autocomplete="off" oninput="onResultsFilterChange()" class="mt-1 w-full px-3 py-2 rounded-xl glass-input text-sm" data-zk-ph-ar="ابحث بعنوان الدرس..." data-zk-ph-en="Search by lesson title..." placeholder="ابحث بعنوان الدرس...">
+                            <datalist id="resFltTitles"></datalist>
+                        </label>
+                        <label class="block text-xs font-medium text-slate-300"><span data-zk-ar="الحالة" data-zk-en="Status">الحالة</span>
+                            <select id="resFltStatus" onchange="onResultsFilterChange()" class="mt-1 w-full px-3 py-2 rounded-xl glass-input text-sm">
+                                <option value="all" data-zk-ar="الكل" data-zk-en="All">الكل</option>
+                                <option value="pass" data-zk-ar="ناجح" data-zk-en="Passed">ناجح</option>
+                                <option value="fail" data-zk-ar="راسب / يحتاج مراجعة" data-zk-en="Failed / Needs review">راسب / يحتاج مراجعة</option>
+                            </select>
+                        </label>
+                        <div class="block text-xs font-medium text-slate-300"><span data-zk-ar="الدرجة المحرزة (%)" data-zk-en="Score achieved (%)">الدرجة المحرزة (%)</span>
+                            <div class="mt-1 flex items-center gap-2">
+                                <input type="number" id="resFltMin" min="0" max="100" step="1" inputmode="numeric" oninput="onResultsFilterChange()" class="w-full px-3 py-2 rounded-xl glass-input text-sm" data-zk-ph-ar="من" data-zk-ph-en="Min" placeholder="من" aria-label="Minimum score">
+                                <span class="text-slate-400">–</span>
+                                <input type="number" id="resFltMax" min="0" max="100" step="1" inputmode="numeric" oninput="onResultsFilterChange()" class="w-full px-3 py-2 rounded-xl glass-input text-sm" data-zk-ph-ar="إلى" data-zk-ph-en="Max" placeholder="إلى" aria-label="Maximum score">
+                            </div>
+                        </div>
+                        <label class="block text-xs font-medium text-slate-300 lg:col-span-2"><span data-zk-ar="تاريخ ووقت الاختبار: من" data-zk-en="Exam date &amp; time: from">تاريخ ووقت الاختبار: من</span>
+                            <input type="datetime-local" id="resFltFrom" onchange="onResultsFilterChange()" oninput="onResultsFilterChange()" class="mt-1 w-full px-3 py-2 rounded-xl glass-input text-sm">
+                        </label>
+                        <label class="block text-xs font-medium text-slate-300 lg:col-span-2"><span data-zk-ar="تاريخ ووقت الاختبار: إلى" data-zk-en="Exam date &amp; time: to">تاريخ ووقت الاختبار: إلى</span>
+                            <input type="datetime-local" id="resFltTo" onchange="onResultsFilterChange()" oninput="onResultsFilterChange()" class="mt-1 w-full px-3 py-2 rounded-xl glass-input text-sm">
+                        </label>
+                    </div>
+                </div>
+
                 <!-- Results Table with Certificate Column -->
                 <div class="glass-card rounded-3xl overflow-hidden shadow-2xl border border-white/10">
                     <div class="p-6 border-b border-white/10 flex justify-between items-center">
@@ -867,6 +912,39 @@
                             </thead>
                             <tbody id="studentResultsTableBody" class="divide-y divide-white/10"></tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: MY MESSAGES (رسائلي مع المدير) - standalone top-level student view -->
+            <div id="studentTabMessages" class="hidden space-y-6">
+                <div class="glass-card p-6 sm:p-8 rounded-3xl space-y-6 border border-indigo-500/30 shadow-2xl" id="stuMsgPanel">
+                    <div class="flex items-center justify-between gap-3">
+                        <h3 class="text-lg font-bold text-white flex items-center space-x-2 rtl:space-x-reverse">
+                            <i class="fa-solid fa-envelope text-indigo-400"></i><span>رسائلي مع المدير / My Messages</span>
+                            <span id="stuUnreadBadge" class="hidden px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold">0</span>
+                        </h3>
+                        <div class="flex items-center gap-2 flex-wrap justify-end">
+                            <button type="button" onclick="renderAllMessages()" class="px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-indigo-300 transition" title="تحديث / Refresh"><i class="fa-solid fa-rotate"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <form onsubmit="handleSendMessage(event,'stu')" class="space-y-3 bg-white/5 p-5 rounded-2xl border border-white/10 h-fit">
+                            <label class="block text-xs font-medium text-slate-300">المستلم / Recipient
+                                <select id="stuMsgTo" required class="mt-1 w-full px-4 py-2.5 rounded-xl glass-input text-sm"><option value="__admin__">المدير / Admin</option></select>
+                            </label>
+                            <input type="text" id="stuMsgSubject" required maxlength="120" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm" placeholder="العنوان / Subject">
+                            <textarea id="stuMsgText" required rows="4" maxlength="2000" class="w-full px-4 py-2.5 rounded-xl glass-input text-sm resize-none" placeholder="المحتوى / Message"></textarea>
+                            <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm transition shadow-lg flex items-center justify-center space-x-2 rtl:space-x-reverse"><i class="fa-solid fa-paper-plane"></i><span>إرسال / Send</span></button>
+                        </form>
+                        <div class="lg:col-span-2 overflow-x-auto rounded-2xl border border-white/10 max-h-[28rem] overflow-y-auto">
+                            <table class="w-full text-right rtl:text-right ltr:text-left text-sm">
+                                <thead class="bg-white/5 text-xs text-indigo-300 uppercase border-b border-white/10 sticky top-0"><tr>
+                                    <th class="px-3 py-3">الاتجاه / Dir</th><th class="px-3 py-3">الطرف الآخر / Party</th><th class="px-3 py-3">العنوان والمحتوى / Message</th><th class="px-3 py-3">الوقت / Time</th><th class="px-3 py-3">الحالة / Status</th>
+                                </tr></thead>
+                                <tbody id="stuMsgTable" class="divide-y divide-white/10"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1033,6 +1111,7 @@
                                     <th class="px-4 py-4" data-i18n="thPassword">كلمة المرور</th>
                                     <th class="px-4 py-4" data-i18n="thRegDate">تاريخ التسجيل</th>
                                     <th class="px-4 py-4" data-i18n="thManualNotes">ملاحظات يدوية</th>
+                                    <th class="px-4 py-4 text-center" data-i18n="thLessonViewPerm" title="صلاحية ظهور تبويب استعراض الدرس / Lesson View Tab Visibility Permission">صلاحية تبويب استعراض الدرس</th>
                                     <th class="px-4 py-4" data-i18n="thActions">الإجراءات</th>
                                 </tr>
                             </thead>
@@ -1369,18 +1448,39 @@
         </div>
     </div>
 
-    <!-- Delete ALL Messages Modal -->
-    <div id="msgDeleteAllModal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4" onclick="closeMsgDeleteAllModal()">
-        <div onclick="event.stopPropagation()" class="glass-card p-6 rounded-3xl w-full max-w-sm space-y-4 border border-rose-500/40 shadow-2xl text-center">
-            <div class="w-14 h-14 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto text-2xl"><i class="fa-solid fa-trash-can"></i></div>
-            <h3 class="text-lg font-bold text-white">تأكيد حذف جميع الرسائل / Delete ALL messages</h3>
-            <p class="text-xs text-slate-300" id="msgDeleteAllMessage"></p>
-            <div class="flex justify-center space-x-3 rtl:space-x-reverse pt-2">
-                <button type="button" onclick="closeMsgDeleteAllModal()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-slate-300">إلغاء / Cancel</button>
-                <button type="button" onclick="confirmMsgDeleteAll()" class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-xs font-semibold text-white">نعم، احذف الكل / Yes, delete all</button>
+    <!-- Achievements (إنجازاتي) export / print modal -->
+    <div id="achievementsModal" class="fixed inset-0 z-50 hidden bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onclick="closeAchievementsModal()" role="dialog" aria-modal="true" aria-labelledby="achModalTitle">
+        <div onclick="event.stopPropagation()" class="glass-card rounded-3xl w-full max-w-2xl max-h-[92vh] flex flex-col border border-amber-500/40 shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between gap-3 p-4 sm:p-5 border-b border-white/10">
+                <h3 id="achModalTitle" class="text-base sm:text-lg font-bold text-white flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-400"></i><span data-zk-ar="إنجازاتي — طباعة وتصدير PDF" data-zk-en="My Achievements — Print / PDF">إنجازاتي — طباعة وتصدير PDF</span></h3>
+                <button type="button" onclick="closeAchievementsModal()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 transition flex items-center justify-center" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-4 sm:p-5 space-y-3 overflow-y-auto">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="achSelectAll(true)" class="px-3 py-1.5 rounded-xl bg-indigo-600/25 hover:bg-indigo-600/45 border border-indigo-500/40 text-xs font-semibold text-indigo-200 transition"><span data-zk-ar="تحديد الكل" data-zk-en="Select all">تحديد الكل</span></button>
+                        <button type="button" onclick="achSelectAll(false)" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-slate-200 transition"><span data-zk-ar="إلغاء تحديد الكل" data-zk-en="Deselect all">إلغاء تحديد الكل</span></button>
+                    </div>
+                    <span id="achCounter" class="text-xs text-slate-300" aria-live="polite"></span>
+                </div>
+                <div id="achList" class="space-y-2 max-h-[40vh] overflow-y-auto pe-1"></div>
+                <label class="flex items-start gap-3 bg-white/5 border border-white/10 rounded-2xl p-3 cursor-pointer">
+                    <input type="checkbox" id="achIncludeGames" onchange="achOnGamesToggle(this)" class="mt-0.5 w-5 h-5 accent-amber-500 shrink-0">
+                    <span class="min-w-0">
+                        <span class="block text-sm font-semibold text-white" data-zk-ar="إدراج نقاط الألعاب التعليمية للدرس" data-zk-en="Include Lesson Educational Game Points">إدراج نقاط الألعاب التعليمية للدرس</span>
+                        <span class="block text-xs text-slate-300 mt-0.5" data-zk-ar="تُضاف نقاط العجلة والأركيد والتوصيل المسجّلة لكل درس محدد." data-zk-en="Adds the recorded Wheel, Arcade and Matching points for each selected lesson.">تُضاف نقاط العجلة والأركيد والتوصيل المسجّلة لكل درس محدد.</span>
+                    </span>
+                </label>
+            </div>
+            <div class="flex flex-wrap items-center justify-end gap-2 p-4 sm:p-5 border-t border-white/10">
+                <button type="button" onclick="closeAchievementsModal()" class="px-5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-slate-300 transition"><span data-zk-ar="إلغاء" data-zk-en="Cancel">إلغاء</span></button>
+                <button type="button" id="achPrintBtn" onclick="achPrint()" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition shadow-lg flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"><i class="fa-solid fa-print"></i><span data-zk-ar="طباعة / حفظ PDF" data-zk-en="Print / Save as PDF">طباعة / حفظ PDF</span></button>
             </div>
         </div>
     </div>
+
+    <!-- Print-only root for the achievements report (hidden on screen) -->
+    <div id="achievementsPrintRoot" aria-hidden="true"></div>
 
     <!-- Image Lightbox Modal -->
     <div id="imageLightboxModal" onclick="closeImageLightbox(event)" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
@@ -1623,6 +1723,7 @@
                 thResultsSummary: "النتائج",
                 thManualNotes: "ملاحظات يدوية",
                 thActions: "الإجراءات",
+                thLessonViewPerm: "صلاحية تبويب استعراض الدرس",
                 adminProfileTitle: "إعدادات حساب المدير",
                 newAdminUser: "اسم مستخدم المدير",
                 newAdminPass: "كلمة مرور المدير",
@@ -1786,6 +1887,7 @@
                 thResultsSummary: "Results",
                 thManualNotes: "Manual Notes",
                 thActions: "Actions",
+                thLessonViewPerm: "Lesson View Tab Access",
                 adminProfileTitle: "Admin Account Settings",
                 newAdminUser: "Admin Username",
                 newAdminPass: "Admin Password",
@@ -2064,24 +2166,33 @@
             loadStudentResults();
         }
 
-        function switchStudentTab(tabName) {
-            const lessonTab = document.getElementById('studentTabLesson');
-            const resultsTab = document.getElementById('studentTabResults');
-            const btnLesson = document.getElementById('tabBtnLesson');
-            const btnResults = document.getElementById('tabBtnResults');
+        /* Lesson View tab permission (per student). Missing flag = allowed (backward compatible). */
+        function isLessonViewAllowed() {
+            return !currentUser || currentUser.allowLessonViewTab !== false;
+        }
 
-            if (tabName === 'lesson') {
-                lessonTab.classList.remove('hidden');
-                resultsTab.classList.add('hidden');
-                btnLesson.className = "px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white transition shadow";
-                btnResults.className = "px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition";
-            } else {
-                lessonTab.classList.add('hidden');
-                resultsTab.classList.remove('hidden');
-                btnResults.className = "px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white transition shadow";
-                btnLesson.className = "px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition";
-                loadStudentResults();
+        function switchStudentTab(tabName) {
+            const ACTIVE_CLS = "px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white transition shadow";
+            const INACTIVE_CLS = "px-4 py-2 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition";
+            const panels = { lesson: 'studentTabLesson', results: 'studentTabResults', messages: 'studentTabMessages' };
+            const buttons = { lesson: 'tabBtnLesson', results: 'tabBtnResults', messages: 'tabBtnMessages' };
+
+            if (tabName === 'lesson' && !isLessonViewAllowed()) {
+                tabName = 'results';
+                showToast(currentLang === 'ar' ? 'تبويب استعراض الدرس غير متاح لحسابك.' : 'The Lesson View tab is not available for your account.', 'error');
             }
+            if (!panels[tabName]) tabName = 'results';
+
+            Object.keys(panels).forEach(key => {
+                const panel = document.getElementById(panels[key]);
+                const btn = document.getElementById(buttons[key]);
+                const on = key === tabName;
+                if (panel) panel.classList.toggle('hidden', !on);
+                if (btn) btn.className = on ? ACTIVE_CLS : INACTIVE_CLS;
+            });
+
+            if (tabName === 'results') loadStudentResults();
+            if (tabName === 'messages') { try { renderAllMessages(); } catch (e) { console.warn(e); } }
         }
 
         const sampleDemoLesson = {
@@ -2490,6 +2601,7 @@
                 btn.classList.add('bg-emerald-600/50', 'border-emerald-400');
                 wheelScore += 10;
                 document.getElementById('wheelScoreDisplay').textContent = wheelScore;
+                if (typeof zkRecordGamePoints === 'function') zkRecordGamePoints('wheel', wheelScore);
                 showToast(currentLang === 'ar' ? 'إجابة صحيحة! +10 نقاط 🎉' : 'Correct answer! +10 points 🎉');
             } else {
                 btn.classList.add('bg-rose-600/50', 'border-rose-400');
@@ -2615,6 +2727,7 @@
                             showToast(`-5: ${item.text}`, 'error');
                         }
                         document.getElementById('arcadeScoreDisplay').textContent = arcadeScore;
+                        if (typeof zkRecordGamePoints === 'function') zkRecordGamePoints('arcade', arcadeScore);
                         arcadeFallingItems.splice(i, 1);
                         continue;
                     }
@@ -2702,6 +2815,7 @@
                 rightBtn.className = "w-full text-right rtl:text-right ltr:text-left p-3.5 rounded-xl bg-emerald-600/30 border border-emerald-400 text-xs sm:text-sm text-emerald-200 opacity-80 cursor-default";
                 matchedPairsCount++;
                 document.getElementById('matchingProgressDisplay').textContent = `${matchedPairsCount} / ${total}`;
+                if (typeof zkRecordGamePoints === 'function') zkRecordGamePoints('matching', matchedPairsCount * 10);
                 selectedLeftIdx = null;
 
                 if (matchedPairsCount === total) {
@@ -3613,43 +3727,21 @@
         function loadStudentResults() {
             if (!currentUser) return;
             const tbody = document.getElementById('studentResultsTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
-            const results = currentUser.results || [];
+            const results = Array.isArray(currentUser.results) ? currentUser.results : [];
             document.getElementById('statTotalTests').textContent = results.length;
 
             if (results.length > 0) {
-                const totalPct = results.reduce((acc, r) => acc + r.percentage, 0);
+                const totalPct = results.reduce((acc, r) => acc + (Number(r && r.percentage) || 0), 0);
                 document.getElementById('statAvgScore').textContent = Math.round(totalPct / results.length) + '%';
             } else {
                 document.getElementById('statAvgScore').textContent = '0%';
             }
 
-            if (results.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">${currentLang === 'ar' ? 'لا توجد اختبارات منجزة حتى الآن.' : 'No completed tests yet.'}</td></tr>`;
-                return;
-            }
-
-            results.forEach((res, idx) => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-white/5 transition">
-                        <td class="px-6 py-4 font-semibold text-white">${res.lessonTitle}</td>
-                        <td class="px-6 py-4 text-slate-300 font-mono text-xs">${res.dateTime}</td>
-                        <td class="px-6 py-4 font-bold text-indigo-400">${res.score} / ${res.total} (${res.percentage}%)</td>
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold ${res.percentage >= 50 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
-                                ${res.percentage >= 50 ? (currentLang === 'ar' ? 'ناجح' : 'Passed') : (currentLang === 'ar' ? 'راسب' : 'Failed')}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <button type="button" onclick="openStudentCertificate(${idx})" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-400/40 text-xs font-bold transition flex items-center space-x-1.5 rtl:space-x-reverse shadow">
-                                <i class="fa-solid fa-award"></i>
-                                <span>${currentLang === 'ar' ? 'استعراض الشهادة' : 'View Certificate'}</span>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
+            // Rows + live filter bar are rendered by the student-extension module (renderStudentResultsRows).
+            if (typeof renderStudentResultsRows === 'function') renderStudentResultsRows(results);
         }
 
         /* ---------- Certificate: themes + bilingual engine ---------- */
@@ -3849,7 +3941,7 @@
 
             if (allKeys.length === 0) {
                 updateStudentQueryUI(false, 0, 0);
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">${currentLang === 'ar' ? 'لا توجد سجلات طلاب مسجلين.' : 'No registered students found.'}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400">${currentLang === 'ar' ? 'لا توجد سجلات طلاب مسجلين.' : 'No registered students found.'}</td></tr>`;
                 return;
             }
 
@@ -3862,7 +3954,7 @@
             updateStudentQueryUI(Boolean(q), keys.length, allKeys.length);
 
             if (keys.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-slate-300">
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-slate-300">
                     <div class="flex flex-col items-center gap-3">
                         <i class="fa-solid fa-user-slash text-2xl text-slate-400"></i>
                         <span>${currentLang === 'ar' ? 'لا يوجد طالب يطابق بحثك.' : 'No student matches your search.'}</span>
@@ -3878,6 +3970,7 @@
                 const uJs = escapeHtml(JSON.stringify(username));
                 const uHtml = escapeHtml(username);
                 const isBanned = Boolean(student.banned);
+                const allowLessonView = student.allowLessonViewTab !== false;
 
                 rowsHtml += `
                     <tr class="hover:bg-white/5 transition ${isBanned ? 'opacity-60 bg-rose-950/20' : ''}">
@@ -3891,6 +3984,11 @@
                         <td class="px-4 py-4 text-slate-300 font-mono text-xs">${escapeHtml(student.regDate || '2026-11-17')}</td>
                         <td class="px-4 py-4">
                             <input type="text" value="${escapeHtml(student.notes || '')}" onchange="updateStudentNote(${uJs}, this.value)" class="px-3 py-1.5 rounded-lg glass-input text-xs w-36" placeholder="ملاحظة...">
+                        </td>
+                        <td class="px-4 py-4 text-center">
+                            <label class="inline-flex items-center justify-center cursor-pointer p-1" title="${currentLang === 'ar' ? 'صلاحية ظهور تبويب استعراض الدرس' : 'Lesson View tab visibility permission'}">
+                                <input type="checkbox" class="w-5 h-5 accent-violet-500 cursor-pointer" ${allowLessonView ? 'checked' : ''} onchange="toggleLessonViewPermission(${uJs}, this.checked, this)" aria-label="${currentLang === 'ar' ? 'صلاحية ظهور تبويب استعراض الدرس' : 'Lesson View tab visibility permission'}">
+                            </label>
                         </td>
                         <td class="px-4 py-4">
                             <div class="flex items-center space-x-1.5 rtl:space-x-reverse">
@@ -3927,6 +4025,7 @@
                 regDate: regDateStr,
                 notes: notes,
                 banned: false,
+                allowLessonViewTab: true,
                 results: []
             };
 
@@ -4220,6 +4319,7 @@ function renderMessageTable(prefix) {
     const unread = mine.filter(m => m.to === me && !m.read).length;
     const badge = $id(prefix + 'UnreadBadge');
     if (badge) { badge.textContent = unread + ' ' + T('جديدة', 'new'); badge.classList.toggle('hidden', unread === 0); }
+    if (!isAdm) { const tabBadge = $id('stuTabUnreadBadge'); if (tabBadge) { tabBadge.textContent = String(unread); tabBadge.classList.toggle('hidden', unread === 0); } }
 
     const active = isAdm && msgFilterActive();
     const view = active ? applyMsgFilter(mine, me) : mine;
@@ -4292,28 +4392,10 @@ function confirmMsgDelete(scope) {
     renderAllMessages();
 }
 
-/* ---- delete ALL messages ---- */
-function openMsgDeleteAllModal() {
-    if (!zkMessages.length) { safeToast('لا توجد رسائل للحذف.', 'There are no messages to delete.', 'error'); return; }
-    $id('msgDeleteAllMessage').textContent = T(`سيتم حذف ${zkMessages.length} رسالة نهائياً من جميع الأطراف. لا يمكن التراجع.`, `${zkMessages.length} message(s) will be permanently deleted for all parties. This cannot be undone.`);
-    $id('msgDeleteAllModal').classList.remove('hidden');
-}
-function closeMsgDeleteAllModal() { const el = $id('msgDeleteAllModal'); if (el) el.classList.add('hidden'); }
-function confirmMsgDeleteAll() {
-    try {
-        zkMessages = [];
-        saveMessages();
-        if (isFirebaseActive && db) db.ref('messages').remove().catch(err => console.warn(err));
-        safeToast('تم حذف جميع الرسائل.', 'All messages deleted.');
-    } catch (e) { console.error(e); safeToast('تعذر حذف الرسائل.', 'Could not delete messages.', 'error'); }
-    closeMsgDeleteAllModal();
-    renderAllMessages();
-}
 document.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
-    const m1 = $id('msgDeleteModal'), m2 = $id('msgDeleteAllModal');
+    const m1 = $id('msgDeleteModal');
     if (m1 && !m1.classList.contains('hidden')) closeMsgDeleteModal();
-    if (m2 && !m2.classList.contains('hidden')) closeMsgDeleteAllModal();
 });
 
 function renderAllMessages() {
@@ -4326,7 +4408,7 @@ try {
         db.ref('messages').on('value', snap => {
             const v = snap.val();
             if (v && typeof v === 'object') { zkMessages = Object.values(v).filter(isValidMsg); saveMessages(); renderAllMessages(); }
-            else if (zkMsgSynced) { zkMessages = []; saveMessages(); renderAllMessages(); } /* node removed remotely (e.g. delete all) */
+            else if (zkMsgSynced) { zkMessages = []; saveMessages(); renderAllMessages(); } /* node removed remotely (e.g. DB import / users wipe) */
             zkMsgSynced = true;
         }, err => console.warn(err));
     }
@@ -5003,6 +5085,8 @@ function resetStudentTabs() {
     closeViewer(false);
     var my = $('studentTabLessons'), b = $('tabBtnLessons');
     if (my) my.classList.add('hidden'); if (b) b.className = INACTIVE;
+    var mm = $('studentTabMessages'), mb = $('tabBtnMessages');
+    if (mm) mm.classList.add('hidden'); if (mb) mb.className = INACTIVE;
 }
 function init() {
     lessons = cleanAll(loadLocal()); lastSig = JSON.stringify(Object.keys(lessons).length ? (function () { var o = {}; Object.keys(lessons).forEach(function (k) { o[k] = toWire(lessons[k]); }); return o; })() : {});
@@ -5028,6 +5112,7 @@ function init() {
             var my = $('studentTabLessons'), b = $('tabBtnLessons'); if (!my || !b) return;
             if (name === 'lessons') {
                 var l = $('studentTabLesson'), r = $('studentTabResults'), bl = $('tabBtnLesson'), br = $('tabBtnResults');
+                var mm = $('studentTabMessages'), mb = $('tabBtnMessages'); if (mm) mm.classList.add('hidden'); if (mb) mb.className = INACTIVE;
                 if (l) l.classList.add('hidden'); if (r) r.classList.add('hidden');
                 if (bl) bl.className = INACTIVE; if (br) br.className = INACTIVE;
                 my.classList.remove('hidden'); b.className = ACTIVE; renderStudent();
@@ -5068,5 +5153,459 @@ window.__zkLessons = { parseLessonJSON: parseLessonJSON, fromWire: fromWire, toW
 })();
 
 </script>
+<script>
+/* ==========================================================
+   ZK STUDENT EXTENSIONS
+   1) Per-student "Lesson View" tab permission (admin toggle + live enforcement)
+   2) Smart results query bar (live filtering, original indexes preserved)
+   3) "إنجازاتي" achievements export (print / Save as PDF) + optional game points
+   4) Per-lesson educational-game points (best score per game, persisted)
+   ========================================================== */
+(function () {
+'use strict';
+
+var LS_STUDENTS = 'zakker_students';
+var GAME_KINDS = ['wheel', 'arcade', 'matching'];
+
+/* ---------------- tiny safe helpers ---------------- */
+function $(id) { return document.getElementById(id); }
+function lang() { try { return currentLang === 'en' ? 'en' : 'ar'; } catch (e) { return 'ar'; } }
+function t(ar, en) { return lang() === 'en' ? en : ar; }
+function esc(v) {
+    return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function num(v) { var n = Number(v); return isFinite(n) ? n : 0; }
+function toast(ar, en, type) { try { showToast(t(ar, en), type || 'success'); } catch (e) { console.warn(ar); } }
+function cloudOn() { try { return !!(isFirebaseActive && db); } catch (e) { return false; } }
+function curUser() { try { return currentUser || null; } catch (e) { return null; } }
+function userResults() {
+    var u = curUser();
+    return u && Array.isArray(u.results) ? u.results : [];
+}
+
+/* =========================================================
+   A. LESSON VIEW TAB PERMISSION
+   ========================================================= */
+var permRef = null, permHandler = null, permPoll = null;
+
+function lessonViewAllowed() {
+    var u = curUser();
+    return !u || u.allowLessonViewTab !== false;
+}
+
+/* Hides / shows the "استعراض الدرس" button + panel for the logged-in student.
+   Inline display is used (not only classes) because other code rewrites button classNames. */
+function applyLessonViewPermission(redirect) {
+    var ok = lessonViewAllowed();
+    var btn = $('tabBtnLesson'), panel = $('studentTabLesson');
+    if (btn) { btn.style.display = ok ? '' : 'none'; btn.setAttribute('aria-hidden', ok ? 'false' : 'true'); btn.tabIndex = ok ? 0 : -1; }
+    if (panel) { panel.style.display = ok ? '' : 'none'; if (!ok) panel.classList.add('hidden'); }
+    if (ok || !redirect) return;
+    var anyVisible = ['studentTabResults', 'studentTabMessages', 'studentTabLessons'].some(function (id) {
+        var el = $(id); return el && !el.classList.contains('hidden');
+    });
+    if (!anyVisible && typeof window.switchStudentTab === 'function') window.switchStudentTab('results');
+}
+
+function onPermissionValue(ok) {
+    var u = curUser(); if (!u) return;
+    var prev = u.allowLessonViewTab !== false;
+    u.allowLessonViewTab = ok;
+    applyLessonViewPermission(true);
+    if (prev !== ok) {
+        toast(ok ? 'تم تفعيل تبويب استعراض الدرس لحسابك.' : 'تم إخفاء تبويب استعراض الدرس من قبل المدير.',
+              ok ? 'The Lesson View tab was enabled for your account.' : 'The Lesson View tab was hidden by the admin.',
+              ok ? 'success' : 'error');
+    }
+}
+
+function localPermCheck() {
+    var u = curUser(); if (!u || cloudOn()) return;
+    try {
+        var raw = localStorage.getItem(LS_STUDENTS); if (!raw) return;
+        var all = JSON.parse(raw), rec = all && all[u.username];
+        if (rec && typeof rec === 'object') {
+            var ok = rec.allowLessonViewTab !== false;
+            if (ok !== (u.allowLessonViewTab !== false)) onPermissionValue(ok);
+        }
+    } catch (e) { /* ignore corrupted storage */ }
+}
+
+function stopPermissionSync() {
+    try { if (permRef && permHandler) permRef.off('value', permHandler); } catch (e) { console.warn(e); }
+    permRef = null; permHandler = null;
+    if (permPoll) { clearInterval(permPoll); permPoll = null; }
+}
+
+function startPermissionSync() {
+    stopPermissionSync();
+    var u = curUser(); if (!u) return;
+    if (cloudOn()) {
+        try {
+            permRef = db.ref('students/' + u.username + '/allowLessonViewTab');
+            permHandler = permRef.on('value', function (snap) {
+                var v = snap.val();
+                onPermissionValue(v !== false);
+            }, function (err) { console.warn('allowLessonViewTab listener:', err && err.message); });
+        } catch (e) { console.warn(e); permRef = null; permHandler = null; }
+    } else {
+        permPoll = setInterval(localPermCheck, 4000);
+    }
+}
+
+window.addEventListener('storage', function (e) { if (e.key === LS_STUDENTS) localPermCheck(); });
+
+/* Admin checkbox handler (persists immediately: local cache + Firebase). */
+window.toggleLessonViewPermission = function (username, checked, el) {
+    var val = !!checked;
+    function rollback(prev) {
+        try { if (localStudentsDb && localStudentsDb[username]) { localStudentsDb[username].allowLessonViewTab = prev; lsSet(LS_STUDENTS, localStudentsDb); } } catch (e) { /* ignore */ }
+        if (el) el.checked = prev;
+    }
+    try {
+        if (!localStudentsDb || typeof localStudentsDb !== 'object' || !localStudentsDb[username]) throw new Error('student-not-found');
+        var prev = localStudentsDb[username].allowLessonViewTab !== false;
+        localStudentsDb[username].allowLessonViewTab = val;
+        lsSet(LS_STUDENTS, localStudentsDb);
+        var okMsg = function () {
+            toast(val ? 'تم إظهار تبويب استعراض الدرس للطالب: ' + username : 'تم إخفاء تبويب استعراض الدرس عن الطالب: ' + username,
+                  val ? 'Lesson View tab is now visible for: ' + username : 'Lesson View tab is now hidden for: ' + username);
+        };
+        if (cloudOn()) {
+            db.ref('students/' + username + '/allowLessonViewTab').set(val).then(okMsg).catch(function (err) {
+                console.warn('permission save failed', err && err.message);
+                rollback(prev);
+                toast('تعذر حفظ الصلاحية في قاعدة البيانات.', 'Could not save the permission to the database.', 'error');
+            });
+        } else {
+            okMsg();
+        }
+    } catch (e) {
+        console.error(e);
+        if (el) el.checked = !val;
+        toast('تعذر تحديث الصلاحية.', 'Could not update the permission.', 'error');
+    }
+};
+
+/* =========================================================
+   B. LESSON GAME POINTS (best score per game, per lesson)
+   ========================================================= */
+var gpTimer = null;
+
+function lessonKey(title) {
+    var s = String(title == null ? '' : title).trim(), h = 5381;
+    for (var i = 0; i < s.length; i++) { h = (((h << 5) + h) + s.charCodeAt(i)) | 0; }
+    return 'g' + (h >>> 0).toString(36) + s.length.toString(36); /* Firebase-safe key */
+}
+function gpTotal(rec) { return num(rec && rec.wheel) + num(rec && rec.arcade) + num(rec && rec.matching); }
+
+function gamePointsFor(title) {
+    var u = curUser();
+    if (!u || !u.gamePoints || typeof u.gamePoints !== 'object') return null;
+    var rec = u.gamePoints[lessonKey(title)];
+    if (rec && typeof rec === 'object') return rec;
+    var keys = Object.keys(u.gamePoints);
+    for (var i = 0; i < keys.length; i++) {
+        var r = u.gamePoints[keys[i]];
+        if (r && typeof r === 'object' && r.lessonTitle === title) return r;
+    }
+    return null;
+}
+
+function persistGamePoints() {
+    gpTimer = null;
+    try {
+        var u = curUser(); if (!u || !u.gamePoints) return;
+        if (localStudentsDb && localStudentsDb[u.username]) { localStudentsDb[u.username].gamePoints = u.gamePoints; lsSet(LS_STUDENTS, localStudentsDb); }
+        if (cloudOn()) db.ref('students/' + u.username + '/gamePoints').set(u.gamePoints).catch(function (e) { console.warn('gamePoints save failed:', e && e.message); });
+    } catch (e) { console.warn(e); }
+}
+function flushGamePoints() { if (gpTimer) { clearTimeout(gpTimer); persistGamePoints(); } }
+
+window.zkRecordGamePoints = function (kind, value) {
+    try {
+        var u = curUser();
+        if (!u || GAME_KINDS.indexOf(kind) < 0) return;
+        var title = (typeof currentLesson !== 'undefined' && currentLesson && currentLesson.title) ? String(currentLesson.title) : '';
+        if (!title) return;
+        var v = Math.max(0, Math.floor(num(value)));
+        if (!u.gamePoints || typeof u.gamePoints !== 'object') u.gamePoints = {};
+        var key = lessonKey(title);
+        var rec = u.gamePoints[key];
+        if (!rec || typeof rec !== 'object') rec = u.gamePoints[key] = { lessonTitle: title, wheel: 0, arcade: 0, matching: 0, total: 0 };
+        if (v <= num(rec[kind])) return; /* keep the best score only */
+        rec[kind] = v; rec.lessonTitle = title; rec.total = gpTotal(rec); rec.updatedAt = Date.now();
+        if (gpTimer) clearTimeout(gpTimer);
+        gpTimer = setTimeout(persistGamePoints, 1200); /* debounce: arcade scores change often */
+    } catch (e) { console.warn('game points', e); }
+};
+window.addEventListener('pagehide', flushGamePoints);
+document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flushGamePoints(); });
+
+/* =========================================================
+   C. SMART RESULTS QUERY
+   ========================================================= */
+function statusOf(r) { return num(r && r.percentage) >= 50 ? 'pass' : 'fail'; }
+function parseDT(s) { if (!s) return NaN; return new Date(String(s).replace(' ', 'T')).getTime(); }
+function inputVal(id) { var el = $(id); return el ? String(el.value || '').trim() : ''; }
+function numOrNull(s) { if (s === '') return null; var n = parseFloat(s); return isNaN(n) ? null : Math.min(100, Math.max(0, n)); }
+function tsOrNull(s) { if (!s) return null; var n = new Date(s).getTime(); return isNaN(n) ? null : n; }
+
+function readFilters() {
+    var f = {
+        title: inputVal('resFltTitle').toLowerCase(),
+        status: inputVal('resFltStatus') || 'all',
+        fromTs: tsOrNull(inputVal('resFltFrom')),
+        toTs: tsOrNull(inputVal('resFltTo')),
+        min: numOrNull(inputVal('resFltMin')),
+        max: numOrNull(inputVal('resFltMax'))
+    };
+    if (f.min !== null && f.max !== null && f.min > f.max) { var m = f.min; f.min = f.max; f.max = m; }
+    if (f.fromTs !== null && f.toTs !== null && f.fromTs > f.toTs) { var x = f.fromTs; f.fromTs = f.toTs; f.toTs = x; }
+    f.active = !!(f.title || f.status !== 'all' || f.fromTs !== null || f.toTs !== null || f.min !== null || f.max !== null);
+    return f;
+}
+
+function matches(res, f) {
+    if (!res || typeof res !== 'object') return false;
+    if (f.title && String(res.lessonTitle == null ? '' : res.lessonTitle).toLowerCase().indexOf(f.title) < 0) return false;
+    var pass = statusOf(res) === 'pass';
+    if (f.status === 'pass' && !pass) return false;
+    if (f.status === 'fail' && pass) return false;
+    if (f.fromTs !== null || f.toTs !== null) {
+        var ts = parseDT(res.dateTime);
+        if (isNaN(ts)) return false;
+        if (f.fromTs !== null && ts < f.fromTs) return false;
+        if (f.toTs !== null && ts > f.toTs) return false;
+    }
+    var pct = num(res.percentage);
+    if (f.min !== null && pct < f.min) return false;
+    if (f.max !== null && pct > f.max) return false;
+    return true;
+}
+
+function rowHtml(res, idx) {
+    var pass = statusOf(res) === 'pass';
+    var badge = pass ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
+    return '<tr class="hover:bg-white/5 transition">' +
+        '<td class="px-6 py-4 font-semibold text-white">' + esc(res.lessonTitle) + '</td>' +
+        '<td class="px-6 py-4 text-slate-300 font-mono text-xs">' + esc(res.dateTime) + '</td>' +
+        '<td class="px-6 py-4 font-bold text-indigo-400">' + num(res.score) + ' / ' + num(res.total) + ' (' + num(res.percentage) + '%)</td>' +
+        '<td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-semibold ' + badge + '">' + (pass ? t('ناجح', 'Passed') : t('راسب', 'Failed')) + '</span></td>' +
+        '<td class="px-6 py-4"><button type="button" onclick="openStudentCertificate(' + idx + ')" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/35 text-amber-300 border border-amber-400/40 text-xs font-bold transition flex items-center space-x-1.5 rtl:space-x-reverse shadow">' +
+        '<i class="fa-solid fa-award"></i><span>' + t('استعراض الشهادة', 'View Certificate') + '</span></button></td></tr>';
+}
+
+function fillTitleList(results) {
+    var dl = $('resFltTitles'); if (!dl) return;
+    var seen = {}, out = [];
+    results.forEach(function (r) {
+        var ttl = r && r.lessonTitle != null ? String(r.lessonTitle) : '';
+        if (ttl && !seen[ttl]) { seen[ttl] = true; out.push('<option value="' + esc(ttl) + '"></option>'); }
+    });
+    dl.innerHTML = out.join('');
+}
+
+window.renderStudentResultsRows = function (results) {
+    try {
+        var tbody = $('studentResultsTableBody'); if (!tbody) return;
+        results = Array.isArray(results) ? results : userResults();
+        var f = readFilters();
+        var valid = results.filter(function (r) { return r && typeof r === 'object'; });
+        var rows = [];
+        results.forEach(function (res, idx) { if (matches(res, f)) rows.push(rowHtml(res, idx)); });
+
+        var info = $('resFltInfo');
+        if (info) info.textContent = f.active
+            ? t('عرض ' + rows.length + ' من ' + valid.length + ' نتيجة', 'Showing ' + rows.length + ' of ' + valid.length + ' results')
+            : t('إجمالي النتائج: ' + valid.length, 'Total results: ' + valid.length);
+        var reset = $('resFltReset'); if (reset) { reset.disabled = !f.active; reset.classList.toggle('opacity-50', !f.active); }
+        fillTitleList(results);
+
+        if (!valid.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">' + t('لا توجد اختبارات منجزة حتى الآن.', 'No completed tests yet.') + '</td></tr>';
+        } else if (!rows.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-10 text-center text-slate-300"><div class="flex flex-col items-center gap-3"><i class="fa-solid fa-magnifying-glass text-2xl text-slate-400"></i><span>' +
+                t('لا توجد نتائج تطابق الفلاتر الحالية.', 'No results match the current filters.') +
+                '</span><button type="button" onclick="resetResultsFilters()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-medium text-indigo-300 transition">' + t('إعادة ضبط', 'Reset') + '</button></div></td></tr>';
+        } else {
+            tbody.innerHTML = rows.join('');
+        }
+    } catch (e) { console.error('results render', e); }
+};
+
+window.onResultsFilterChange = function () { window.renderStudentResultsRows(userResults()); };
+
+window.resetResultsFilters = function (silent) {
+    ['resFltTitle', 'resFltFrom', 'resFltTo', 'resFltMin', 'resFltMax'].forEach(function (id) { var el = $(id); if (el) el.value = ''; });
+    var s = $('resFltStatus'); if (s) s.value = 'all';
+    if (silent !== true) window.renderStudentResultsRows(userResults());
+};
+
+/* =========================================================
+   D. ACHIEVEMENTS (إنجازاتي) - selection modal + print / PDF
+   ========================================================= */
+var ach = { sel: {}, games: false, open: false };
+
+function achCount() { return userResults().reduce(function (n, r, i) { return n + (r && typeof r === 'object' && ach.sel[i] ? 1 : 0); }, 0); }
+
+function updateAchCounter() {
+    var total = userResults().filter(function (r) { return r && typeof r === 'object'; }).length, n = achCount();
+    var c = $('achCounter'); if (c) c.textContent = t('المحدد: ' + n + ' من ' + total, 'Selected: ' + n + ' of ' + total);
+    var b = $('achPrintBtn'); if (b) b.disabled = n === 0;
+}
+
+function renderAchList() {
+    var box = $('achList'); if (!box) return;
+    var results = userResults(), html = [];
+    results.forEach(function (r, i) {
+        if (!r || typeof r !== 'object') return;
+        var pass = statusOf(r) === 'pass';
+        var gp = ach.games ? gamePointsFor(r.lessonTitle) : null;
+        var gpBadge = ach.games
+            ? '<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30 whitespace-nowrap"><i class="fa-solid fa-gamepad"></i> ' + (gp ? gpTotal(gp) : 0) + '</span>' : '';
+        html.push('<label class="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 cursor-pointer">' +
+            '<input type="checkbox" class="w-5 h-5 accent-indigo-500 shrink-0" ' + (ach.sel[i] ? 'checked' : '') + ' onchange="achToggle(' + i + ', this.checked)">' +
+            '<div class="min-w-0 flex-1"><div class="text-sm font-semibold text-white truncate">' + esc(r.lessonTitle) + '</div>' +
+            '<div class="text-[11px] text-slate-300 font-mono">' + esc(r.dateTime) + '</div></div>' +
+            '<div class="flex flex-col items-end gap-1"><span class="text-xs font-bold ' + (pass ? 'text-emerald-400' : 'text-rose-400') + ' whitespace-nowrap">' + num(r.score) + ' / ' + num(r.total) + ' (' + num(r.percentage) + '%)</span>' + gpBadge + '</div></label>');
+    });
+    box.innerHTML = html.length ? html.join('') : '<div class="text-center text-sm text-slate-400 py-6">' + t('لا توجد نتائج لتصديرها.', 'There are no results to export.') + '</div>';
+    updateAchCounter();
+}
+
+window.openAchievementsModal = function () {
+    try {
+        if (!curUser()) return;
+        ach.sel = {};
+        userResults().forEach(function (r, i) { if (r && typeof r === 'object') ach.sel[i] = true; });
+        var cb = $('achIncludeGames'); if (cb) cb.checked = ach.games;
+        renderAchList();
+        var m = $('achievementsModal'); if (m) m.classList.remove('hidden');
+        ach.open = true;
+    } catch (e) { console.error(e); toast('تعذر فتح نافذة الإنجازات.', 'Could not open the achievements dialog.', 'error'); }
+};
+window.closeAchievementsModal = function () { var m = $('achievementsModal'); if (m) m.classList.add('hidden'); ach.open = false; };
+window.achSelectAll = function (flag) {
+    userResults().forEach(function (r, i) { if (r && typeof r === 'object') ach.sel[i] = !!flag; });
+    renderAchList();
+};
+window.achToggle = function (i, checked) { ach.sel[i] = !!checked; updateAchCounter(); };
+window.achOnGamesToggle = function (el) { ach.games = !!(el && el.checked); renderAchList(); };
+
+function studentName() {
+    var u = curUser(); if (!u) return '';
+    return String(u.fullName || u.name || u.username || '');
+}
+
+function buildReport(items, withGames) {
+    var dir = lang() === 'en' ? 'ltr' : 'rtl';
+    var loc = lang() === 'en' ? 'en-GB' : 'ar-EG', nowStr;
+    try { nowStr = new Date().toLocaleString(loc); } catch (e) { nowStr = new Date().toISOString(); }
+    var n = items.length;
+    var passed = items.filter(function (it) { return statusOf(it.res) === 'pass'; }).length;
+    var avg = n ? Math.round(items.reduce(function (a, it) { return a + num(it.res.percentage); }, 0) / n) : 0;
+    var gameSum = 0;
+
+    var rows = items.map(function (it, k) {
+        var r = it.res, pass = statusOf(r) === 'pass', gpCell = '';
+        if (withGames) {
+            var gp = gamePointsFor(r.lessonTitle);
+            if (gp) {
+                gameSum += gpTotal(gp);
+                gpCell = '<td><span class="zkp-gp">' + gpTotal(gp) + '</span><span class="zkp-gpsub">' +
+                    t('عجلة', 'Wheel') + ' ' + num(gp.wheel) + ' · ' + t('أركيد', 'Arcade') + ' ' + num(gp.arcade) + ' · ' + t('توصيل', 'Match') + ' ' + num(gp.matching) + '</span></td>';
+            } else {
+                gpCell = '<td><span class="zkp-gpsub">' + t('لا توجد نقاط مسجلة', 'No points recorded') + '</span></td>';
+            }
+        }
+        return '<tr><td>' + (k + 1) + '</td><td>' + esc(r.lessonTitle) + '</td>' +
+            '<td class="' + (pass ? 'zkp-pass' : 'zkp-fail') + '">' + (pass ? t('ناجح', 'Passed') : t('راسب', 'Needs review')) + '</td>' +
+            '<td><span class="zkp-ltr">' + esc(r.dateTime) + '</span></td>' +
+            '<td><b>' + num(r.score) + ' / ' + num(r.total) + '</b> (' + num(r.percentage) + '%)</td>' + gpCell + '</tr>';
+    }).join('');
+
+    var cols = withGames ? ['5%', '29%', '13%', '19%', '16%', '18%'] : ['6%', '38%', '16%', '22%', '18%'];
+    var colgroup = '<colgroup>' + cols.map(function (w) { return '<col style="width:' + w + '">'; }).join('') + '</colgroup>';
+    var head = '<tr><th>#</th><th>' + t('عنوان الدرس', 'Lesson title') + '</th><th>' + t('الحالة', 'Status') + '</th><th>' + t('تاريخ ووقت الاختبار', 'Exam date & time') + '</th><th>' + t('الدرجة المحرزة', 'Score achieved') + '</th>' +
+        (withGames ? '<th>' + t('نقاط الألعاب التعليمية', 'Educational game points') + '</th>' : '') + '</tr>';
+
+    return '<div class="zkp-doc" dir="' + dir + '" lang="' + lang() + '">' +
+        '<header class="zkp-card">' +
+        '<div class="zkp-brand">' + t('منصة ذاكر التعليمية', 'Zakker Educational Platform') + '</div>' +
+        '<div class="zkp-title">' + t('تقرير إنجازات الطالب', 'Student Achievements Report') + '</div>' +
+        '<div class="zkp-namebox"><span class="zkp-namelabel">' + t('اسم الطالب:', 'Student name:') + '</span><span class="zkp-name">' + esc(studentName()) + '</span></div>' +
+        '<div class="zkp-meta">' +
+        '<span class="zkp-chip">' + t('تاريخ التقرير', 'Report date') + ': <b>' + esc(nowStr) + '</b></span>' +
+        '<span class="zkp-chip">' + t('عدد الدروس', 'Lessons') + ': <b>' + n + '</b></span>' +
+        '<span class="zkp-chip">' + t('ناجح', 'Passed') + ': <b>' + passed + ' / ' + n + '</b></span>' +
+        '<span class="zkp-chip">' + t('متوسط الدرجات', 'Average score') + ': <b>' + avg + '%</b></span>' +
+        (withGames ? '<span class="zkp-chip">' + t('مجموع نقاط الألعاب', 'Total game points') + ': <b>' + gameSum + '</b></span>' : '') +
+        '</div></header>' +
+        '<table class="zkp-table">' + colgroup + '<thead>' + head + '</thead><tbody>' + rows + '</tbody></table>' +
+        '<div class="zkp-foot">' + t('تم إنشاء هذا التقرير تلقائيًا من منصة ذاكر', 'This report was generated automatically by Zakker') + '</div></div>';
+}
+
+window.achPrint = function () {
+    try {
+        var results = userResults();
+        var items = [];
+        results.forEach(function (r, i) { if (r && typeof r === 'object' && ach.sel[i]) items.push({ res: r, idx: i }); });
+        if (!items.length) { toast('اختر درسًا واحدًا على الأقل.', 'Select at least one lesson.', 'error'); return; }
+        var root = $('achievementsPrintRoot'); if (!root) throw new Error('print-root-missing');
+        root.innerHTML = buildReport(items, ach.games);
+        document.body.classList.add('zk-printing-ach');
+        var done = false;
+        var cleanup = function () {
+            if (done) return; done = true;
+            document.body.classList.remove('zk-printing-ach');
+            root.innerHTML = '';
+            window.removeEventListener('afterprint', cleanup);
+        };
+        window.addEventListener('afterprint', cleanup);
+        setTimeout(function () {
+            try { window.print(); } catch (e) { console.error(e); cleanup(); toast('تعذرت الطباعة.', 'Printing failed.', 'error'); }
+        }, 80);
+    } catch (e) { console.error(e); toast('تعذر إنشاء التقرير.', 'Could not build the report.', 'error'); }
+};
+
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ach.open) window.closeAchievementsModal(); });
+
+/* =========================================================
+   E. WIRING (runs after the other modules wrapped their functions)
+   ========================================================= */
+function wrapGlobal(name, pre, post) {
+    var orig = window[name];
+    if (typeof orig !== 'function') { console.warn('zk-ext: missing', name); return; }
+    window[name] = function () {
+        try { if (pre) pre.apply(this, arguments); } catch (e) { console.warn(e); }
+        var out = orig.apply(this, arguments);
+        try { if (post) post.apply(this, arguments); } catch (e) { console.warn(e); }
+        return out;
+    };
+}
+
+function onStudentSession() {
+    if (!curUser()) return;
+    window.resetResultsFilters(true);
+    ach.games = false; window.closeAchievementsModal();
+    applyLessonViewPermission(true);
+    startPermissionSync();
+}
+function onStudentLeave() {
+    flushGamePoints();
+    stopPermissionSync();
+    window.closeAchievementsModal();
+}
+
+function boot() {
+    wrapGlobal('initStudentDashboard', null, onStudentSession);
+    wrapGlobal('logoutUser', onStudentLeave, null);
+    wrapGlobal('toggleLanguage', null, function () { if (ach.open) renderAchList(); });
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+
 </body>
 </html>
